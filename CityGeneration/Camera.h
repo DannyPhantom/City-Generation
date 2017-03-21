@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include "Libraries\glm\gtc\matrix_transform.hpp"
-#include "Libraries\glm\glm.hpp"
+#include "Libraries/glm/gtc/matrix_transform.hpp"
+#include "Libraries/glm/glm.hpp"
 
 /*
 	Represents a camera that

@@ -1,5 +1,5 @@
-#include "Libraries\glew\glew.h"
-#include "Libraries\freeglut\freeglut.h"
+#include "Libraries/glew/glew.h"
+#include "Libraries/freeglut/freeglut.h"
 #include <math.h>
 #include "Scene.h"
 #include "Camera.h"

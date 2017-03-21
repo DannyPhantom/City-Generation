@@ -1,5 +1,5 @@
 #include "SceneParameters.h"
-#include "Libraries\freeglut\freeglut.h"
+#include "Libraries/freeglut/freeglut.h"
 
 int SceneParameters::screenHeight;
 int SceneParameters::screenWidth;

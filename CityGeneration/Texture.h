@@ -2,8 +2,8 @@
 
 #include <string>
 #include <iostream>
-#include "Libraries\glew\glew.h"
-#include "Libraries\stb_image.h"
+#include "Libraries/glew/glew.h"
+#include "Libraries/stb_image.h"
 
 /*
 	Reperesents an  OpenGL texture

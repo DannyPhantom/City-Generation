@@ -2,8 +2,8 @@
 
 #include "Mesh.h"
 #include <vector>
-#include "Libraries\glm\mat4x4.hpp"
-#include "Libraries\glm\gtx\transform.hpp"
+#include "Libraries/glm/mat4x4.hpp"
+#include "Libraries/glm/gtx/transform.hpp"
 
 /*
 	Represents an object in the scene.

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Libraries\glew\glew.h"
-#include "Libraries\glm\vec4.hpp"
-#include "Libraries\glm\vec3.hpp"
-#include "Libraries\glm\vec2.hpp"
+#include "Libraries/glew/glew.h"
+#include "Libraries/glm/vec4.hpp"
+#include "Libraries/glm/vec3.hpp"
+#include "Libraries/glm/vec2.hpp"
 #include "Texture.h"
 #include <vector>
 

@@ -2,7 +2,7 @@
 #include "ShaderLoader.h"
 #include "ObjLoader.h"
 #include "SceneParameters.h"
-#include "Libraries\glm\gtc\matrix_transform.hpp"
+#include "Libraries/glm/gtc/matrix_transform.hpp"
 #include <chrono>
 
 Scene::Scene()
@@ -56,7 +56,7 @@ void Scene::renderScene(float dt) {
 
 void Scene::loadShaders() {
 	ShaderLoader loader;
-	basicPhongShader = loader.loadShader("Shaders/PhongVertexShader.glsl", "Shaders/PhongFragmentShader.glsl");
+	basicPhongShader = loader.loadShader("CityGeneration/Shaders/PhongVertexShader.glsl", "CityGeneration/Shaders/PhongFragmentShader.glsl");
 }
 
 void Scene::loadOtherStuff() {
@@ -65,7 +65,7 @@ void Scene::loadOtherStuff() {
 
 void Scene::loadObjects() {
 	ObjLoader loader;
-	objects.push_back(loader.loadFromFile("Models/bunny.obj"));
+	objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
 }
 
 void Scene::placeObjects() {
