@@ -10,6 +10,7 @@
 
 #include "Libraries/glm/glm.hpp"
 
+
 #include <string>
 
 using namespace std;
@@ -31,6 +32,9 @@ public:
 	void setScale(vec3 _scale);
 	vec3 getScale();
 
+
+	void setName(string _name);
+	string getName();
 private:
 	string name;
 	vec3 translation;

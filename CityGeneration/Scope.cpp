@@ -56,3 +56,13 @@ vec3 Scope::getScale()
 {
 	return scale;
 }
+
+void Scope::setName(string _name)
+{
+	name = _name;
+}
+
+string Scope::getName()
+{
+	return name;
+}

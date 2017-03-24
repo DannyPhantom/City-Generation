@@ -43,3 +43,13 @@ void TreeObject::addChildren(vector<Scope> scopes)
 
 
 }
+
+string TreeObject::getScopeName()
+{
+	return description.getName();
+}
+
+Scope TreeObject::getScope()
+{
+	return description;
+}
