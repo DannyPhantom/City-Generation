@@ -18,7 +18,7 @@ using namespace glm;
 class Scope {
 public:
 	Scope();
-	Scope(vec3 _translation, vec3 _rotation, vec3 _scale);
+	Scope(vec3 _translation, vec3 _rotation, vec3 _scale, string _name);
 
 	virtual ~Scope();
 
