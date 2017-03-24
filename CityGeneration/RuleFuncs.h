@@ -44,7 +44,13 @@ public:
 	RuleFuncs();
 	virtual ~RuleFuncs();
 
-	Scope S(float x, float y, float z, std::string name);
+	Scope S(float x, float y, float z, Scope orig, std::string name);
+	Scope T(float x, float y, float z, Scope orig, std::string name);
+	Scope R(float x, float y, float z, Scope orig, std::string name);
+
+	std::vector<Scope> Comp(std::string type, Scope orig, std::vector<std::string> names);
+	std::vector<Scope> Subdiv(char axis, std::vector<float> sizes, Scope orig, std::vector<std::string> names);
+	std::vector<Scope> Repeat(char axis, int num_of_els, std::string name);
 };
 
 #endif /* CITYGENERATION_RULEFUNCS_H_ */
