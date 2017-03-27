@@ -38,6 +38,7 @@
  * */
 
 #include Scope.h
+#include <math.h>
 
 class RuleFuncs {
 public:
@@ -50,7 +51,7 @@ public:
 
 	std::vector<Scope> Comp(std::string type, Scope orig, std::vector<std::string> names);
 	std::vector<Scope> Subdiv(char axis, std::vector<float> sizes, Scope orig, std::vector<std::string> names);
-	std::vector<Scope> Repeat(char axis, int num_of_els, std::string name);
+	std::vector<Scope> Repeat(char axis, int spacing, Scope orig, std::string name);
 };
 
 #endif /* CITYGENERATION_RULEFUNCS_H_ */
