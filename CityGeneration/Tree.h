@@ -8,14 +8,16 @@
 #ifndef CITYGENERATION_TREE_H_
 #define CITYGENERATION_TREE_H_
 
+#include <string>
 #include "TreeObject.h"
 
 class Tree {
 public:
-	Tree();
+	Tree(TreeObject* _root);
 	virtual ~Tree();
 
 	vector<TreeObject*> getLeafes();
+	vector<TreeObject*> getLeafesByName(string name);
 private:
 	TreeObject* root;
 

@@ -15,14 +15,20 @@
 
 class TreeObject {
 public:
+	TreeObject(Scope _scope);
 	TreeObject();
 	virtual ~TreeObject();
 
+
+	string getScopeName();
+	Scope getScope();
 	void addChild(TreeObject* objectToAdd);
 	vector<TreeObject *> getChildren();
 
-private:
+	void addChildren(vector<Scope> scopes);
+
 	bool isLeaf = true;
+private:
 	string name;
 	Scope description;
 	vector<TreeObject*> children;

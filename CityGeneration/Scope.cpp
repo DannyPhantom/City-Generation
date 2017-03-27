@@ -44,14 +44,25 @@ void Scope::setScale(vec3 _scale)
 	scale = _scale;
 }
 
-Scope::Scope(vec3 _translation, vec3 _rotation, vec3 _scale)
+Scope::Scope(vec3 _translation, vec3 _rotation, vec3 _scale, string _name)
 {
 	translation = _translation;
 	rotation = _rotation;
 	scale = _scale;
+	name = _name;
 }
 
 vec3 Scope::getScale()
 {
 	return scale;
+}
+
+void Scope::setName(string _name)
+{
+	name = _name;
+}
+
+string Scope::getName()
+{
+	return name;
 }

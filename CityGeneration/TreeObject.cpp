@@ -7,6 +7,11 @@
 
 #include "TreeObject.h"
 
+TreeObject::TreeObject(Scope _scope)
+{
+	description = _scope;
+}
+
 TreeObject::TreeObject() {
 	// TODO Auto-generated constructor stub
 
@@ -25,4 +30,26 @@ void TreeObject::addChild(TreeObject* objectToAdd)
 vector<TreeObject*> TreeObject::getChildren()
 {
 	return children;
+}
+
+void TreeObject::addChildren(vector<Scope> scopes)
+{
+
+	for (auto scope:scopes)
+	{
+		TreeObject* child = new TreeObject(scope);
+		children.push_back(child);
+	}
+
+
+}
+
+string TreeObject::getScopeName()
+{
+	return description.getName();
+}
+
+Scope TreeObject::getScope()
+{
+	return description;
 }

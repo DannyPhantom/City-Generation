@@ -10,6 +10,7 @@
 
 #include "Libraries/glm/glm.hpp"
 
+
 #include <string>
 
 using namespace std;
@@ -18,7 +19,7 @@ using namespace glm;
 class Scope {
 public:
 	Scope();
-	Scope(vec3 _translation, vec3 _rotation, vec3 _scale);
+	Scope(vec3 _translation, vec3 _rotation, vec3 _scale, string _name);
 
 	virtual ~Scope();
 
@@ -31,6 +32,9 @@ public:
 	void setScale(vec3 _scale);
 	vec3 getScale();
 
+
+	void setName(string _name);
+	string getName();
 private:
 	string name;
 	vec3 translation;
