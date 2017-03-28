@@ -6,6 +6,8 @@
 #include <chrono>
 #include <string>
 
+class Texture;
+
 /*
 	The main class of the program.
 	Contains all the UI's, objects, basic controls, etc.
@@ -75,11 +77,14 @@ private:
 private:
 	std::vector<SceneObject *> objects;
 
+	Texture *windowsTexture;
+
 	glm::mat4 projectionMatrix;
 	glm::mat4 inverseProjectionMatrix;
 
 	//shaders
 	GLuint basicPhongShader;
+	GLuint shader2D;
 	Camera cam;
 };
 
