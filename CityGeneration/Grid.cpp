@@ -58,8 +58,10 @@ vector<Grid*> Grid::splitGrid()
 	if (firstRand == 1)
 	{
 		//split the grid along the X axis
+		return splitGrid(w * 0.90, Axis::X_AXIS);
 	} else {
-
+		//split the grid along the Y axis
+		return splitGrid(h * 0.90, Axis::Y_AXIS);
 	}
 }
 

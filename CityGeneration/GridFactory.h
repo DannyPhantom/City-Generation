@@ -9,6 +9,7 @@
 #define CITYGENERATION_GRIDFACTORY_H_
 
 #include "GridHistory.h"
+#include "Grid.h"
 
 class GridFactory {
 public:
@@ -16,6 +17,7 @@ public:
 	virtual ~GridFactory();
 
 	static GridHistory generateDefaultGrid();
+	static GridHistory generateCustomSubGrids(Grid* initGrid, int numLevels);
 };
 
 #endif /* CITYGENERATION_GRIDFACTORY_H_ */
