@@ -39,7 +39,13 @@ public:
 	double getW() const;
 	void setW(double w);
 
+	void addRoad(Road* road);
+	static vector<Road*> getRoads();
+
 private:
+
+
+	static vector<Road*> roads;
 
 	double originX;
 	double originY;

@@ -87,6 +87,8 @@ vector<Grid*> Grid::splitGrid()
  */
 vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
 {
+
+	const double roadWidth = 5.0f; //TODO REMOVE FOR PRODUCTION
 	if (axis == Axis::X_AXIS)
 	{
 		//NOTE: roadWidth is undefined. Set up a constant or add a variable to it
@@ -133,6 +135,35 @@ vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
 int Grid::generateRandomNumber(int max, int min)
 {
 	return rand() % max + min;
+}
+
+
+//basic idea is to check for duplicates.
+//If the list lacks duplicates of road then
+//road is added to the list
+void Grid::addRoad(Road* road)
+{
+	bool containsDuplicate = false;
+	for (auto aRoad:roads)
+	{
+		bool statement1 = (aRoad->direction == road->direction);
+		bool statement2 = (aRoad->origin_x == road->origin_x);
+		bool statement3 = (aRoad->origin_y == road->origin_y);
+		bool statement4 = (aRoad->width == road->width);
+		bool statement5 = (aRoad->length == road->length);
+
+		bool result = (statement1 & statement2) & statement3 & statement4 & statement5;
+
+		if (result)
+		{
+			return;	//means a duplicate was found
+		}
+	}
+	roads.push_back(road);	//getting here means no roads were found
+}
+
+vector<Road*> Grid::getRoads() {
+	return roads;
 }
 
 double Grid::generateRandomNumber(double max, double min)
