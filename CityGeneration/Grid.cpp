@@ -89,25 +89,35 @@ vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
 {
 	if (axis == Axis::X_AXIS)
 	{
+		//NOTE: roadWidth is undefined. Set up a constant or add a variable to it
+		Road* splittingRoad = new Road(h, roadWidth, originX + splitLength, originY, 1);
+
 		//split along the X Axis
-		Grid* grid1 = new Grid(originX, originY, w - splitLength, h);
-		Grid* grid2 = new Grid(originX + splitLength, originY,splitLength, h);
+		Grid* grid1 = new Grid(originX, originY, w - (splitLength+(roadWidth/2.0f)), h);
+		Grid* grid2 = new Grid(originX + (splitLength+(roadWidth/2.0f)), originY,splitLength-(roadWidth/2.0f), h);
 
 		vector<Grid*> newGrids;
 		newGrids.push_back(grid1);
 		newGrids.push_back(grid2);
+
+		//do something with splittingRoad here
 
 		return newGrids;
 	} else if (axis == Axis::Y_AXIS)
 	{
+		//NOTE: roadWidth is undefined. Set up a constant or add a variable to it
+		Road* splittingRoad = new Road(w, roadWidth, originX, originY + splitLength, 2);
+
 		//split along the Y Axis
 
-		Grid* grid1 = new Grid(originX, originY, w, h - splitLength);
-		Grid* grid2 = new Grid(originX, originY + splitLength, w, h - splitLength);
+		Grid* grid1 = new Grid(originX, originY, w, h - (splitLength+(roadWidth/2.0f)));
+		Grid* grid2 = new Grid(originX, originY + (splitLength+(roadWidth/2.0f)), w, h - (splitLength+(roadWidth/2.0f)));
 
 		vector<Grid*> newGrids;
 		newGrids.push_back(grid1);
 		newGrids.push_back(grid2);
+
+		//do something with splittingRoad here
 
 		return newGrids;
 

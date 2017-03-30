@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include "road.h"
 
 enum Axis
 {
