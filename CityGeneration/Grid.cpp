@@ -58,10 +58,10 @@ vector<Grid*> Grid::splitGrid()
 	if (firstRand == 1)
 	{
 		//split the grid along the X axis
-		return splitGrid(w * 0.90, Axis::X_AXIS);
+		return splitGrid(generateRandomNumber(w * 0.90, 0.0), Axis::X_AXIS);
 	} else {
 		//split the grid along the Y axis
-		return splitGrid(h * 0.90, Axis::Y_AXIS);
+		return splitGrid(generateRandomNumber(h * 0.90, 0.0), Axis::Y_AXIS);
 	}
 }
 
@@ -125,5 +125,7 @@ int Grid::generateRandomNumber(int max, int min)
 	return rand() % max + min;
 }
 
-
-
+double Grid::generateRandomNumber(double max, double min)
+{
+	return (int) (rand() % max + min);
+}

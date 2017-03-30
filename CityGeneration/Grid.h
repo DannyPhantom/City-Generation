@@ -46,6 +46,7 @@ private:
 	double w,h;
 
 	int generateRandomNumber(int max, int min);
+	double generateRandomNumber(double max, double min);
 };
 
 #endif /* CITYGENERATION_GRID_H_ */
