@@ -8,6 +8,9 @@
 #include "Texture.h"
 #include "WindowsTextureGenerator.h"
 #include "SimpleBuilding.h"
+#include "GridFactory.h"
+#include "GridHistory.h"
+#include "Grid.h"
 
 Texture *Scene::windowsTexture = NULL;
 
@@ -75,7 +78,22 @@ void Scene::loadOtherStuff() {
 void Scene::loadObjects() {
 	ObjLoader loader;
 	objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
-	objects.push_back(new SimpleBuilding(glm::vec3(0, 0, 0), glm::vec3(20, 0, 20)));
+	//objects.push_back(new SimpleBuilding(glm::vec3(100, 0, 0), glm::vec3(20, 0, 20)));
+
+	Grid grid(-1000, -1000, 2000, 2000);
+	GridFactory fact;
+	GridHistory hist = fact.generateCustomSubGrids(&grid, 11);
+	std::vector<LandPlot> plots = hist.getBuildingSpots();
+
+	for (LandPlot plot : plots) {
+		glm::vec2 center = (plot.bot_left + plot.top_right) / 2.0f;
+		glm::vec2 size = glm::vec2(plot.bot_right.x - plot.bot_left.x, plot.top_left.y - plot.bot_left.y);
+		SimpleBuilding *b = new SimpleBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
+		objects.push_back(b);
+
+		std::cout << "Pos : " << center.x << " " << center.y << std::endl;
+		std::cout << "Size : " << size.x << " " << size.y << std::endl;
+	}
 }
 
 void Scene::placeObjects() {

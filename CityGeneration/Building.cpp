@@ -7,6 +7,7 @@ Building::Building(glm::vec3 center, glm::vec3 size): centerPosition(center), si
 {
 	rng = std::mt19937(std::random_device{}());
 	dist = std::uniform_int_distribution<>(0, RAND_MAX);
+	setPosition(center);
 }
 
 

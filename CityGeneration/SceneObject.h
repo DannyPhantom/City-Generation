@@ -12,7 +12,7 @@
 */
 class SceneObject
 {
-private:
+protected:
 	std::vector<Mesh *> meshes;					//set of object's meshes
 	bool vaoSetup = false;						//whether VAO's have already been setup
 	bool vboSetup = false;						//whether VBO's have already been setup

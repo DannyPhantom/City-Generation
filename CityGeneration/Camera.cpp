@@ -9,7 +9,7 @@ Camera::Camera()
 	theta = 0;
 	shouldBeMovedForward = false;
 	shouldBeMovedBackwards = false;
-	cameraMovementSpeed = 15.0f;
+	cameraMovementSpeed = 150.0f;
 
 	direction.x = cos(glm::radians(phi)) * cos(glm::radians(theta));
 	direction.y = sin(glm::radians(phi));

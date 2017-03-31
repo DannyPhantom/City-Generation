@@ -24,12 +24,13 @@ public:
 	Road();
 	Road(double l, double w, double x, double y, int d);
 	virtual ~Road();
-private:
 	double length;
-	double width;
-	double origin_x;
-	double origin_y;
-	int direction;
+		double width;
+		double origin_x;
+		double origin_y;
+		int direction;
+private:
+
 
 
 	//Optional - endpoints for x and y.

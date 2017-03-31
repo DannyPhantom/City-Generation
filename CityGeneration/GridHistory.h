@@ -11,8 +11,10 @@
 
 #include <vector>
 #include "Grid.h"
+#include "Libraries/glm/glm.hpp"
 
 using namespace std;
+
 
 struct LandPlot{
 	glm::vec2 bot_left;

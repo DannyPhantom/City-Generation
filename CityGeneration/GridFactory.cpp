@@ -72,8 +72,10 @@ GridHistory GridFactory::generateCustomSubGrids(Grid* initGrid, int numLevels)
 			for (auto level : previousLevel)
 			{
 				vector<Grid*> grids = level->splitGrid();
-				currentLevel.push_back(grids.at(0));
-				currentLevel.push_back(grids.at(1));
+				if (grids.size() > 0) {
+					currentLevel.push_back(grids.at(0));
+					currentLevel.push_back(grids.at(1));
+				}
 			}
 
 			gridHistory.addLevelToGrid(currentLevel);

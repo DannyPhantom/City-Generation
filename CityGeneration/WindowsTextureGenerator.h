@@ -23,8 +23,8 @@ public:
 	Texture *generateTexture();
 
 
-	const int textureDimensions = 512;
-	static const int numOfWindows = 64;
+	const int textureDimensions = 2048;
+	static const int numOfWindows = 256;
 };
 
 #endif /* CITYGENERATION_WINDOWSTEXTUREGENERATOR_H_ */

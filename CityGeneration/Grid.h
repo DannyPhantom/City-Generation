@@ -10,7 +10,7 @@
 
 #include <cstdlib>
 #include <vector>
-#include "road.h"
+#include "Road.h"
 
 enum Axis
 {
@@ -27,7 +27,7 @@ public:
 
 	vector<Grid*> splitGrid();
 
-	vector<Grid*> splitGrid(double splitLength, Axis axis);
+	vector<Grid*> splitGrid(double roadWidth, double splitLength, Axis axis);
 
 
 	double getH() const;
@@ -39,13 +39,14 @@ public:
 	double getW() const;
 	void setW(double w);
 
-	void addRoad(Road* road);
+	static void addRoad(Road* road);
 	static vector<Road*> getRoads();
+	static vector<Road*> roads;
 
 private:
 
 
-	static vector<Road*> roads;
+
 
 	double originX;
 	double originY;

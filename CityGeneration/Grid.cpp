@@ -6,6 +6,11 @@
  */
 
 #include "Grid.h"
+#include <cmath>
+#include <iostream>
+#include "Libraries/glm/glm.hpp"
+
+vector<Road*> Grid::roads;
 
 Grid::Grid(double _originX, double _originY, double _w, double _h) {
 	// TODO Auto-generated constructor stub
@@ -54,15 +59,24 @@ void Grid::setW(double w) {
 
 vector<Grid*> Grid::splitGrid()
 {
-	int firstRand = generateRandomNumber(1, 0);
-	if (firstRand == 1)
-	{
-		//split the grid along the X axis
-		return splitGrid(generateRandomNumber(w * 0.90, 0.0), Axis::X_AXIS);
-	} else {
-		//split the grid along the Y axis
-		return splitGrid(generateRandomNumber(h * 0.90, 0.0), Axis::Y_AXIS);
+	double firstRand = generateRandomNumber(1.0, 0.0);
+	vector<Grid*> newGrids;
+	int numAttempts = 0;
+	double roadWidth = 10.0f; //TODO REMOVE FOR PRODUCTION
+
+	while (newGrids.size() == 0 && numAttempts++ < 10) {
+		if (firstRand >= 0.5)
+		{
+			//split the grid along the X axis
+			newGrids = splitGrid(roadWidth, generateRandomNumber(w * 0.70, 0.4), Axis::X_AXIS);
+		} else {
+			//split the grid along the Y axis
+			newGrids = splitGrid(roadWidth, generateRandomNumber(h * 0.70, 0.4), Axis::Y_AXIS);
+		}
+		roadWidth *= generateRandomNumber(0.9, 0.5);
 	}
+
+	return newGrids;
 }
 
 
@@ -85,20 +99,37 @@ vector<Grid*> Grid::splitGrid()
  * |    |
  * ------
  */
-vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
+vector<Grid*> Grid::splitGrid(double roadWidth, double splitLength, Axis axis)
 {
 
-	const double roadWidth = 5.0f; //TODO REMOVE FOR PRODUCTION
+
+	vector<Grid*> newGrids;
+
+	if (roadWidth > splitLength || roadWidth > w - splitLength || roadWidth > h - splitLength) {
+		return newGrids;
+	}
+
 	if (axis == Axis::X_AXIS)
 	{
 		//NOTE: roadWidth is undefined. Set up a constant or add a variable to it
 		Road* splittingRoad = new Road(h, roadWidth, originX + splitLength, originY, 1);
 
 		//split along the X Axis
-		Grid* grid1 = new Grid(originX, originY, w - (splitLength+(roadWidth/2.0f)), h);
-		Grid* grid2 = new Grid(originX + (splitLength+(roadWidth/2.0f)), originY,splitLength-(roadWidth/2.0f), h);
+		Grid* grid1 = new Grid(originX, originY, (splitLength-(roadWidth/2.0f)), h);
+		Grid* grid2 = new Grid(originX + (splitLength+(roadWidth/2.0f)), originY, w - splitLength-(roadWidth/2.0f), h);
 
-		vector<Grid*> newGrids;
+		glm::vec2 center1 = glm::vec2(grid1->originX + grid1->w/2.0f, grid1->originY + grid1->h/2.0f);
+		glm::vec2 size1 = glm::vec2(grid1->w, grid1->h);
+
+		std::cout << "Pos : " << center1.x << " " << center1.y << std::endl;
+		std::cout << "Size : " << size1.x << " " << size1.y << std::endl;
+
+		glm::vec2 center2 = glm::vec2(grid2->originX + grid2->w/2.0f, grid2->originY + grid2->h/2.0f);
+		glm::vec2 size2 = glm::vec2(grid2->w, grid2->h);
+
+		std::cout << "Pos : " << center2.x << " " << center2.y << std::endl;
+		std::cout << "Size : " << size2.x << " " << size2.y << std::endl << std::endl;
+
 		newGrids.push_back(grid1);
 		newGrids.push_back(grid2);
 
@@ -114,10 +145,21 @@ vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
 
 		//split along the Y Axis
 
-		Grid* grid1 = new Grid(originX, originY, w, h - (splitLength+(roadWidth/2.0f)));
+		Grid* grid1 = new Grid(originX, originY, w, (splitLength-(roadWidth/2.0f)));
 		Grid* grid2 = new Grid(originX, originY + (splitLength+(roadWidth/2.0f)), w, h - (splitLength+(roadWidth/2.0f)));
 
-		vector<Grid*> newGrids;
+		glm::vec2 center1 = glm::vec2(grid1->originX + grid1->w/2.0f, grid1->originY + grid1->h/2.0f);
+		glm::vec2 size1 = glm::vec2(grid1->w, grid1->h);
+
+		std::cout << "Pos : " << center1.x << " " << center1.y << std::endl;
+		std::cout << "Size : " << size1.x << " " << size1.y << std::endl;
+
+		glm::vec2 center2 = glm::vec2(grid2->originX + grid2->w/2.0f, grid2->originY + grid2->h/2.0f);
+		glm::vec2 size2 = glm::vec2(grid2->w, grid2->h);
+
+		std::cout << "Pos : " << center2.x << " " << center2.y << std::endl;
+		std::cout << "Size : " << size2.x << " " << size2.y << std::endl << std::endl;
+
 		newGrids.push_back(grid1);
 		newGrids.push_back(grid2);
 
@@ -138,7 +180,7 @@ vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
 
 int Grid::generateRandomNumber(int max, int min)
 {
-	return rand() % max + min;
+	return round(((float)rand() / RAND_MAX) * (max - min) + min);
 }
 
 
@@ -172,5 +214,5 @@ vector<Road*> Grid::getRoads() {
 
 double Grid::generateRandomNumber(double max, double min)
 {
-	return ((float)rand() / RAND_MAX) * (max - min) + min;
+	return ((float)rand()/RAND_MAX) * (max - min) + min;
 }
