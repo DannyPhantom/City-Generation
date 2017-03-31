@@ -8,8 +8,6 @@
 #ifndef CITYGENERATION_ROAD_H_
 #define CITYGENERATION_ROAD_H_
 
-#include "Grid.h"
-
 #define _X 1
 #define _Y 2
 

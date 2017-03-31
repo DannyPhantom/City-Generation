@@ -49,6 +49,31 @@ vector<Grid*> GridHistory::getLastLevelOfGrid()
 	return gridHistoryLevels.at(gridHistoryLevels.size() - 1);
 }
 
+//Similar to getLastLevelOfGrid(), but returns the information in the form of corner locations
+vector<LandPlot> GridHistory::getBuildingSpots()
+{
+	vector<Grid*> lastLevel = getLastLevelOfGrid();
+	vector<LandPlot> landList;
+
+	for(int i = 0; i < lastLevel.size(); i++)
+	{
+		LandPlot temp;
+		glm::vec2 bl, br, tl, tr;
+		bl = glm::vec2(lastLevel[i]->getOriginX(), lastLevel[i]->getOriginY());
+		br = glm::vec2(lastLevel[i]->getOriginX()+lastLevel[i]->getW(), lastLevel[i]->getOriginY());
+		tl = glm::vec2(lastLevel[i]->getOriginX(), lastLevel[i]->getOriginY()+lastLevel[i]->getH());
+		tr = glm::vec2(lastLevel[i]->getOriginX()+lastLevel[i]->getW(), lastLevel[i]->getOriginY()+lastLevel[i]->getH());
+
+		temp.bot_left = bl;
+		temp.bot_right = br;
+		temp.top_left = tl;
+		temp.top_right = tr;
+
+		landList.push_back(temp);
+	}
+
+	return landList;
+}
 
 //returns the last level of the grid
 int GridHistory::getLevels()

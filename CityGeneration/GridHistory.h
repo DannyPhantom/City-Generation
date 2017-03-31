@@ -3,6 +3,7 @@
  *
  *  Created on: Mar 29, 2017
  *      Author: bemayer
+ *      Edited by: Marc DeSorcy
  */
 
 #ifndef CITYGENERATION_GRIDHISTORY_H_
@@ -12,6 +13,13 @@
 #include "Grid.h"
 
 using namespace std;
+
+struct LandPlot{
+	glm::vec2 bot_left;
+	glm::vec2 bot_right;
+	glm::vec2 top_left;
+	glm::vec2 top_right;
+};
 
 class GridHistory {
 public:
@@ -32,6 +40,8 @@ public:
 	int getLevels();
 
 
+	//The below method obtains land plots for Igor's purposes
+	vector<LandPlot> getBuildingSpots();
 
 
 

@@ -104,6 +104,8 @@ vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
 
 		//do something with splittingRoad here
 
+		addRoad(splittingRoad);
+
 		return newGrids;
 	} else if (axis == Axis::Y_AXIS)
 	{
@@ -120,6 +122,8 @@ vector<Grid*> Grid::splitGrid(double splitLength, Axis axis)
 		newGrids.push_back(grid2);
 
 		//do something with splittingRoad here
+
+		addRoad(splittingRoad);
 
 		return newGrids;
 
