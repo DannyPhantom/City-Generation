@@ -2,7 +2,7 @@
 
 #include "Building.h"
 #include <vector>
-#include "Libraries\glew\glew.h"
+#include "Libraries/glew/glew.h"
 
 class SimpleBuilding :
 	public Building

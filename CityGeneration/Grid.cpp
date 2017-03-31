@@ -127,5 +127,5 @@ int Grid::generateRandomNumber(int max, int min)
 
 double Grid::generateRandomNumber(double max, double min)
 {
-	return (int) (rand() % max + min);
+	return ((float)rand() / RAND_MAX) * (max - min) + min;
 }
