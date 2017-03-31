@@ -7,6 +7,8 @@
 
 #include "Grid.h"
 
+vector<Road*> Grid::roads;
+
 Grid::Grid(double _originX, double _originY, double _w, double _h) {
 	// TODO Auto-generated constructor stub
 	originX = _originX;
@@ -172,5 +174,5 @@ vector<Road*> Grid::getRoads() {
 
 double Grid::generateRandomNumber(double max, double min)
 {
-	return (int) (rand() % max + min);
+	return ((float)rand()/RAND_MAX) * (max - min) + min;
 }
