@@ -14,9 +14,6 @@
 
 class WindowsTextureGenerator {
 private:
-	const int textureDimensions = 512;
-	const int numOfWindows = 64;
-
 	float* getWindowIntensities();
 
 public:
@@ -24,6 +21,10 @@ public:
 	virtual ~WindowsTextureGenerator();
 
 	Texture *generateTexture();
+
+
+	const int textureDimensions = 512;
+	static const int numOfWindows = 64;
 };
 
 #endif /* CITYGENERATION_WINDOWSTEXTUREGENERATOR_H_ */

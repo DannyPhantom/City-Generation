@@ -4,7 +4,7 @@
 
 Camera::Camera()
 {
-	position = glm::vec3(-5, 0, 0);
+	position = glm::vec3(-20, 50, 0);
 	phi = 0;
 	theta = 0;
 	shouldBeMovedForward = false;

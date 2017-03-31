@@ -15,6 +15,9 @@ class Texture;
 class Scene
 {
 public:
+	static Texture *windowsTexture;
+
+
 	Scene();
 	~Scene();
 
@@ -76,8 +79,6 @@ private:
 
 private:
 	std::vector<SceneObject *> objects;
-
-	Texture *windowsTexture;
 
 	glm::mat4 projectionMatrix;
 	glm::mat4 inverseProjectionMatrix;

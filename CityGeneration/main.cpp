@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "SceneParameters.h"
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
 
 #define GLM_FORCE_RADIANS
 
@@ -152,6 +154,7 @@ int main(int argc, char **argv) {
 	//initialize the scene parameters and
 	//set the mouse mode to move
 	SceneParameters::initialize();
+	srand(time(NULL));
 
 	//initialize the window
 	glutInit(&argc, argv);
