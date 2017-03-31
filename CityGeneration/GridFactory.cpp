@@ -53,6 +53,7 @@ GridHistory GridFactory::generateDefaultGrid()
 
 
 	gridHistory.addLevelToGrid(level2);
+	return gridHistory;
 
 }
 
