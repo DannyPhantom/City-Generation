@@ -9,6 +9,7 @@
 #include <cmath>
 #include <iostream>
 #include "Libraries/glm/glm.hpp"
+#include "Randomizer.h"
 
 vector<Road*> Grid::roads;
 
@@ -59,7 +60,7 @@ void Grid::setW(double w) {
 
 vector<Grid*> Grid::splitGrid()
 {
-	double firstRand = generateRandomNumber(1.0, 0.0);
+	double firstRand = Randomizer::getRandomFloat(0.0f, 1.0f);
 	vector<Grid*> newGrids;
 	int numAttempts = 0;
 	double roadWidth = 10.0f; //TODO REMOVE FOR PRODUCTION
@@ -68,12 +69,12 @@ vector<Grid*> Grid::splitGrid()
 		if (firstRand >= 0.5)
 		{
 			//split the grid along the X axis
-			newGrids = splitGrid(roadWidth, generateRandomNumber(w * 0.70, 0.4), Axis::X_AXIS);
+			newGrids = splitGrid(roadWidth, Randomizer::getRandomFloat(0.40f, w * 0.70f), Axis::X_AXIS);
 		} else {
 			//split the grid along the Y axis
-			newGrids = splitGrid(roadWidth, generateRandomNumber(h * 0.70, 0.4), Axis::Y_AXIS);
+			newGrids = splitGrid(roadWidth, Randomizer::getRandomFloat(0.40f, h * 0.70f), Axis::Y_AXIS);
 		}
-		roadWidth *= generateRandomNumber(0.9, 0.5);
+		roadWidth *= Randomizer::getRandomFloat(0.5, 0.9);
 	}
 
 	return newGrids;
@@ -178,11 +179,6 @@ vector<Grid*> Grid::splitGrid(double roadWidth, double splitLength, Axis axis)
 
 }
 
-int Grid::generateRandomNumber(int max, int min)
-{
-	return round(((float)rand() / RAND_MAX) * (max - min) + min);
-}
-
 
 //basic idea is to check for duplicates.
 //If the list lacks duplicates of road then
@@ -210,9 +206,4 @@ void Grid::addRoad(Road* road)
 
 vector<Road*> Grid::getRoads() {
 	return roads;
-}
-
-double Grid::generateRandomNumber(double max, double min)
-{
-	return ((float)rand()/RAND_MAX) * (max - min) + min;
 }

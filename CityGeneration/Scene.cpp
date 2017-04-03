@@ -8,9 +8,12 @@
 #include "Texture.h"
 #include "WindowsTextureGenerator.h"
 #include "SimpleBuilding.h"
+#include "RoundBuilding.h"
+#include "ComplexBlockBuilding.h"
 #include "GridFactory.h"
 #include "GridHistory.h"
 #include "Grid.h"
+#include "Randomizer.h"
 
 Texture *Scene::windowsTexture = NULL;
 
@@ -88,11 +91,21 @@ void Scene::loadObjects() {
 	for (LandPlot plot : plots) {
 		glm::vec2 center = (plot.bot_left + plot.top_right) / 2.0f;
 		glm::vec2 size = glm::vec2(plot.bot_right.x - plot.bot_left.x, plot.top_left.y - plot.bot_left.y);
-		SimpleBuilding *b = new SimpleBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
+		Building *b = NULL;
+		int buildingType = Randomizer::getRandomInt(1, 3);
+		buildingType = 3;
+		if (buildingType == 1) {
+			b = new RoundBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
+		}
+		else if (buildingType == 2) {
+			b = new SimpleBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
+		}
+		else if (buildingType == 3) {
+			b = new ComplexBlockBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
+		}
 		objects.push_back(b);
-
-		std::cout << "Pos : " << center.x << " " << center.y << std::endl;
-		std::cout << "Size : " << size.x << " " << size.y << std::endl;
+		/*std::cout << "Pos : " << center.x << " " << center.y << std::endl;
+		std::cout << "Size : " << size.x << " " << size.y << std::endl;*/
 	}
 }
 

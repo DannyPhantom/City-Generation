@@ -9,6 +9,7 @@
 #include "Quad2D.h"
 #include <iostream>
 #include <math.h>
+#include "Randomizer.h"
 
 WindowsTextureGenerator::WindowsTextureGenerator() {
 }
@@ -27,10 +28,10 @@ float* WindowsTextureGenerator::getWindowIntensities() {
 
 	for (int windowX = 0; windowX < numOfWindows; windowX++) {
 		for (int windowY = 0; windowY < numOfWindows; windowY++) {
-			float windowIntensity = ((double) rand() / (RAND_MAX));
+			float windowIntensity = Randomizer::getRandomFloat(0.0f, 1.0f);
 			windowIntensity = pow(windowIntensity, 5);
 
-			int fadePoint = (int) ((rand() / RAND_MAX) * pixelsPerWindow);
+			int fadePoint = Randomizer::getRandomInt(0, pixelsPerWindow);
 			int fadePixels = pixelsPerWindow - fadePoint;
 			for (int i=0; i<pixelsPerWindow; i++) {
 				for (int j=0; j<pixelsPerWindow; j++) {

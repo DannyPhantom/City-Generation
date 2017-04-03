@@ -10,8 +10,10 @@ in VS_OUT
 } fs_in;
 
 uniform vec4 specular_color = vec4(0.7);
-uniform float specular_power = 128.0;
-uniform vec4 ambient = vec4(0.1, 0.1, 0.1, 1.0);
+uniform float specular_power = 1.0;
+uniform float ambient = 0.4f;
+
+const vec4 moonlightColor = vec4(34.f/255.f, 63.f/255.f, 89.f/255.f, 1);
 
 // Texture Mapping
 uniform sampler2D TextureUniform;
@@ -27,12 +29,18 @@ void main(void)
     // Calculate R locally
     vec3 R = reflect(-L, N);
 
-    vec4 diffuse = max(dot(N, L), 0.3) * fs_in.C;
+	vec4 color = fs_in.C;
+	if (TextureValid) color = texture(TextureUniform, fs_in.uv);
+
+   /* vec4 diffuse = max(dot(N, L), 0.3) * fs_in.C;
 	if (TextureValid)
 		diffuse *= texture(TextureUniform, fs_in.uv);
 
-    vec4 specular = pow(max(dot(R, V), 0.0), specular_power) * specular_color;
+    vec4 specular = pow(max(dot(R, V), 0.0), specular_power) * specular_color;*/
+
+	vec4 diffuseMoon = max(dot(N, L), 0.3) * moonlightColor;
 
     // Write final colour to the framebuffer
-    gl_FragColor = ambient + diffuse + specular;
+    //gl_FragColor = (1.0f + ambient) * diffuse + specular;
+	gl_FragColor = color + ambient * diffuseMoon;
 }

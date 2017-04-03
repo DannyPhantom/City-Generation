@@ -20,7 +20,7 @@ out VS_OUT
 } vs_out;
 
 // Position of light
-uniform vec3 light_pos = vec3(100.0, 100.0, 100.0);
+uniform vec3 light_pos = vec3(1000.0, 1000.0, 1000.0);
 
 void main(void)
 {
@@ -31,7 +31,7 @@ void main(void)
     vs_out.N = NormalMatrix * normal_attr;
 
     // Calculate light vector
-    vs_out.L = light_pos - P.xyz;
+    vs_out.L = (ModelViewMatrix * vec4(light_pos, 1)).xyz - P.xyz;
 
     // Calculate view vector
     vs_out.V = -P.xyz;

@@ -5,8 +5,6 @@
 
 Building::Building(glm::vec3 center, glm::vec3 size): centerPosition(center), size(size)
 {
-	rng = std::mt19937(std::random_device{}());
-	dist = std::uniform_int_distribution<>(0, RAND_MAX);
 	setPosition(center);
 }
 
@@ -15,10 +13,14 @@ Building::~Building()
 {
 }
 
-float Building::getRandomFloat(float min, float max) {
-	return ((float)dist(rng) / RAND_MAX) * (max - min) + min;
-}
+void Building::generateSide(glm::vec3 firstCorner, glm::vec3 secondCorner, glm::vec3 thirdCorner, glm::vec3 fourthCorner,
+	std::vector<glm::vec3>& vertices, std::vector<glm::vec3>& normals) {
+	glm::vec3 normal = glm::cross(secondCorner - firstCorner, fourthCorner - firstCorner);
+	vertices.push_back(firstCorner);			normals.push_back(normal);
+	vertices.push_back(secondCorner);			normals.push_back(normal);
+	vertices.push_back(thirdCorner);			normals.push_back(normal);
 
-int Building::getRandomInt(int min, int max) {
-	return (int) std::round(getRandomFloat(min, max));
+	vertices.push_back(firstCorner);			normals.push_back(normal);
+	vertices.push_back(thirdCorner);			normals.push_back(normal);
+	vertices.push_back(fourthCorner);			normals.push_back(normal);
 }
