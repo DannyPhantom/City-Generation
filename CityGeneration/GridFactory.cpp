@@ -76,6 +76,10 @@ GridHistory GridFactory::generateCustomSubGrids(Grid* initGrid, int numLevels)
 					currentLevel.push_back(grids.at(0));
 					currentLevel.push_back(grids.at(1));
 				}
+				else
+				{
+					currentLevel.push_back(level);
+				}
 			}
 
 			gridHistory.addLevelToGrid(currentLevel);

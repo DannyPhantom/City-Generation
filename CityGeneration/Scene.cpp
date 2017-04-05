@@ -121,6 +121,9 @@ void Scene::loadObjects() {
 	GridHistory hist = fact.generateCustomSubGrids(&grid, 11);
 	plots = hist.getBuildingSpots();
 
+
+	/*TODO: Subdivide plots that are too big*/
+
 	int i = 0;
 	for (LandPlot plot : plots) {
 		std::cout << "Plot " << i << ": BL = (" << plot.bot_left.x << ", " << plot.bot_left.y
