@@ -80,8 +80,8 @@ void Scene::loadOtherStuff() {
 
 void Scene::loadObjects() {
 	ObjLoader loader;
-	objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
-	//objects.push_back(new SimpleBuilding(glm::vec3(100, 0, 0), glm::vec3(20, 0, 20)));
+	//objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
+	//objects.push_back(new ComplexBlockBuilding(glm::vec3(100, 0, 0), glm::vec3(40, 0, 40)));
 
 	Grid grid(-1000, -1000, 2000, 2000);
 	GridFactory fact;
@@ -92,15 +92,14 @@ void Scene::loadObjects() {
 		glm::vec2 center = (plot.bot_left + plot.top_right) / 2.0f;
 		glm::vec2 size = glm::vec2(plot.bot_right.x - plot.bot_left.x, plot.top_left.y - plot.bot_left.y);
 		Building *b = NULL;
-		int buildingType = Randomizer::getRandomInt(1, 3);
-		buildingType = 3;
-		if (buildingType == 1) {
+		float buildingType = Randomizer::getRandomFloat(0.0f, 1.0f);
+		if (buildingType < 0.33f) {
 			b = new RoundBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
 		}
-		else if (buildingType == 2) {
+		else if (buildingType < 0.66f) {
 			b = new SimpleBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
 		}
-		else if (buildingType == 3) {
+		else if (buildingType <= 1) {
 			b = new ComplexBlockBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
 		}
 		objects.push_back(b);
