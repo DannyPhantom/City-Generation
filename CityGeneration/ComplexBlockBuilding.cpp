@@ -99,29 +99,24 @@ void ComplexBlockBuilding::create() {
 		boundingBox.addCoord(offset - blockSize / 2.0f);
 	}
 
-	setupVBOs();
-	setupVAOs();
+	//translate all the points such that the model is in the center of 0,0,0
+	glm::vec3 translation = -(boundingBox.getMax() + boundingBox.getMin()) / 2.0f;
 
-	//finally, centerize and scale the building
-	setPosition(position - (boundingBox.getMax() + boundingBox.getMin()) / 2.0f);
-	glm::vec3 scale = 1.0f / (boundingBox.getMax() - boundingBox.getMin());
+	std::vector<Mesh *> *meshes = getMeshes();
+	for (int i = 0; i < meshes->size(); i++) {
+		std::vector<glm::vec3> *vertices = (*meshes)[i]->getVertices();
+		for (int j = 0; j < vertices->size(); j++) {
+			(*vertices)[j] += translation;
+		}
+	}
+
+	//scale it to the appropriate size
+	scale = 1.0f / (boundingBox.getMax() - boundingBox.getMin());
 	scale.x *= size.x;
 	scale.z *= size.z;
 	scale.y = 1;
 	setScale(scale);
 
-	/*glm::vec3 translation = -(boundingBox.getMax() + boundingBox.getMin()) / 2.0f;
-	glm::vec3 scale = 1.0f / (boundingBox.getMax() - boundingBox.getMin());
-
-	for (Mesh *m : *getMeshes()) {
-		std::vector<glm::vec3> vertices = *m->getVertices();
-		for (glm::vec3 &v : vertices) {
-			v += translation;
-			v.x * scale.x;
-			v.z * scale.z;
-		}
-	}
-
-	size.y = 1;
-	setScale(size);*/
+	setupVBOs();
+	setupVAOs();
 }
