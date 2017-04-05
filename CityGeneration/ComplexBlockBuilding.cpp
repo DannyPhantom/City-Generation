@@ -2,7 +2,7 @@
 #include "Randomizer.h"
 #include "Scene.h"
 #include <algorithm>
-#include <cmath>
+#include <math.h>
 #include "Mesh.h"
 
 #include "BoundingBox.h"

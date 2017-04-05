@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Libraries\glm\glm.hpp"
+#include "Libraries/glm/glm.hpp"
 
 class BoundingBox
 {
