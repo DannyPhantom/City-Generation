@@ -58,24 +58,62 @@ void Grid::setW(double w) {
 	this->w = w;
 }
 
+void Grid::calc_Ratio_Factor()
+{
+	int ratio = num_x_splits - num_y_splits;
+	ratio_factor = (double)ratio*0.2;
+}
+
 vector<Grid*> Grid::splitGrid()
 {
 	double firstRand = Randomizer::getRandomFloat(0.0f, 1.0f);
 	vector<Grid*> newGrids;
 	int numAttempts = 0;
-	double roadWidth = 10.0f; //TODO REMOVE FOR PRODUCTION
+	double roadWidth = 25.0f; //TODO REMOVE FOR PRODUCTION
+	bool _x;
+	bool _y;
 
 	while (newGrids.size() == 0 && numAttempts++ < 10) {
-		if (firstRand >= 0.5)
+		double min;
+		double max;
+		_x = false;
+		_y = false;
+
+		double ratio = w/h;
+		if(ratio >= 1.0f)
+		{
+			ratio_factor = 0.4*(ratio-1.0);
+		}
+		else if (ratio < 1.0f)
+		{
+			ratio_factor = -0.4*((1.0/ratio)-1.0);
+		}
+		if (firstRand >= (0.5-ratio_factor))
 		{
 			//split the grid along the X axis
-			newGrids = splitGrid(roadWidth, Randomizer::getRandomFloat(0.40f, w * 0.70f), Axis::X_AXIS);
+			min = 0.3*w; //4.0*roadWidth;
+			max = 0.7*w;//(w - 4.0*roadWidth);
+			//0.40f, w*0.70f
+			newGrids = splitGrid(roadWidth, Randomizer::getRandomFloat(min, max), Axis::X_AXIS);
+			_x = true;
 		} else {
 			//split the grid along the Y axis
-			newGrids = splitGrid(roadWidth, Randomizer::getRandomFloat(0.40f, h * 0.70f), Axis::Y_AXIS);
+			min = 0.3*h;//4.0*roadWidth;
+			max = 0.7*h;//(h - 4.0*roadWidth);
+			//0.40f, h * 0.70f
+			newGrids = splitGrid(roadWidth, Randomizer::getRandomFloat(min, max), Axis::Y_AXIS);
+			_y = true;
 		}
 		roadWidth *= Randomizer::getRandomFloat(0.5, 0.9);
+		//firstRand = Randomizer::getRandomFloat(0.0f, 1.0f);
 	}
+
+	if(_x)
+		num_x_splits++;
+	else if (_y)
+		num_y_splits++;
+
+	//calc_Ratio_Factor();
 
 	return newGrids;
 }

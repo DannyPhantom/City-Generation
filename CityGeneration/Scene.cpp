@@ -88,12 +88,18 @@ void Scene::loadObjects() {
 	GridHistory hist = fact.generateCustomSubGrids(&grid, 11);
 	std::vector<LandPlot> plots = hist.getBuildingSpots();
 
+	int i = 0;
 	for (LandPlot plot : plots) {
+		std::cout << "Plot " << i << ": BL = (" << plot.bot_left.x << ", " << plot.bot_left.y
+				<<"); TL = (" << plot.top_left.x << ", " << plot.top_left.y
+				<<"); TR = (" << plot.top_right.x << ", " << plot.top_right.y
+				<<"); BR = (" << plot.bot_right.x << ", " << plot.bot_right.y << "\n";
+				i++;
 		glm::vec2 center = (plot.bot_left + plot.top_right) / 2.0f;
 		glm::vec2 size = glm::vec2(plot.bot_right.x - plot.bot_left.x, plot.top_left.y - plot.bot_left.y);
 		Building *b = NULL;
 		int buildingType = Randomizer::getRandomInt(1, 3);
-		buildingType = 3;
+		buildingType = 2;
 		if (buildingType == 1) {
 			b = new RoundBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
 		}

@@ -46,12 +46,16 @@ public:
 private:
 
 
-
+	void calc_Ratio_Factor();
 
 	double originX;
 	double originY;
 
 	double w,h;
+
+	double ratio_factor;
+	int num_x_splits = 0;
+	int num_y_splits = 0;
 };
 
 #endif /* CITYGENERATION_GRID_H_ */
