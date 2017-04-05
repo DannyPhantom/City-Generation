@@ -14,8 +14,11 @@
 #include "GridHistory.h"
 #include "Grid.h"
 #include "Randomizer.h"
+#include "Road.h"
 
 Texture *Scene::windowsTexture = NULL;
+std::vector<LandPlot> plots;
+std::vector<Road *> roads;
 
 Scene::Scene()
 {
@@ -59,6 +62,36 @@ void Scene::renderPhong() {
 	}
 
 	glUseProgram(0);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glLoadMatrixf(&projectionMatrix[0][0]);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glLoadMatrixf(&cam.getViewMatrix()[0][0]);
+
+	glColor3f(1, 1, 1);
+	for (LandPlot p : plots) {
+		glBegin(GL_LINE_STRIP);
+		glVertex3f(p.bot_left.x, 0, p.bot_left.y);
+		glVertex3f(p.bot_right.x, 0, p.bot_right.y);
+		glVertex3f(p.top_right.x, 0, p.top_right.y);
+		glVertex3f(p.top_left.x, 0, p.top_left.y);
+		glVertex3f(p.bot_left.x, 0, p.bot_left.y);
+		glEnd();
+	}
+
+	glColor3f(1, 1, 0);
+	for (Road *r : roads) {
+		glBegin(GL_LINES);
+		glVertex3f(r->origin_x, 0, r->origin_y);
+		if (r->direction == 1)
+			glVertex3f(r->origin_x, 0, r->origin_y + r->length);
+		if (r->direction == 2)
+			glVertex3f(r->origin_x + r->length, 0, r->origin_y);
+		glEnd();
+	}
 }
 
 void Scene::renderScene(float dt) {
@@ -86,7 +119,7 @@ void Scene::loadObjects() {
 	Grid grid(-1000, -1000, 2000, 2000);
 	GridFactory fact;
 	GridHistory hist = fact.generateCustomSubGrids(&grid, 11);
-	std::vector<LandPlot> plots = hist.getBuildingSpots();
+	plots = hist.getBuildingSpots();
 
 	int i = 0;
 	for (LandPlot plot : plots) {
@@ -112,6 +145,14 @@ void Scene::loadObjects() {
 		/*std::cout << "Pos : " << center.x << " " << center.y << std::endl;
 		std::cout << "Size : " << size.x << " " << size.y << std::endl;*/
 	}
+
+	std::vector<Grid *> grids = hist.getLastLevelOfGrid();
+	for (Grid *g : grids) {
+		for (Road *r : g->getRoads()) {
+			roads.push_back(r);
+		}
+	}
+
 }
 
 void Scene::placeObjects() {

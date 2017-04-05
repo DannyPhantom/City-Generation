@@ -105,8 +105,23 @@ void ComplexBlockBuilding::create() {
 	//finally, centerize and scale the building
 	setPosition(position - (boundingBox.getMax() + boundingBox.getMin()) / 2.0f);
 	glm::vec3 scale = 1.0f / (boundingBox.getMax() - boundingBox.getMin());
-	scale.x *= size.x * 0.4f;
-	scale.z *= size.z * 0.4f;
+	scale.x *= size.x;
+	scale.z *= size.z;
 	scale.y = 1;
 	setScale(scale);
+
+	/*glm::vec3 translation = -(boundingBox.getMax() + boundingBox.getMin()) / 2.0f;
+	glm::vec3 scale = 1.0f / (boundingBox.getMax() - boundingBox.getMin());
+
+	for (Mesh *m : *getMeshes()) {
+		std::vector<glm::vec3> vertices = *m->getVertices();
+		for (glm::vec3 &v : vertices) {
+			v += translation;
+			v.x * scale.x;
+			v.z * scale.z;
+		}
+	}
+
+	size.y = 1;
+	setScale(size);*/
 }

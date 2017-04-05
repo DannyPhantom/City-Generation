@@ -9,8 +9,8 @@ protected:
 	glm::vec3 centerPosition;
 	glm::vec3 size;
 
-	const float minHeight = 100;
-	const float maxHeight = 350;
+	const float minHeight = 30;
+	const float maxHeight = 150;
 
 	const glm::vec2 numOfWindowsPerMeter = glm::vec2(0.4, 0.2);
 
