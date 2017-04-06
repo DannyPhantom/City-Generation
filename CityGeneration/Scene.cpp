@@ -173,10 +173,10 @@ void Scene::loadObjects() {
 		}
 	}
 
-	RoadCreator* roadCreator = new RoadCreator();
-	roadCreator->makeRenderableRoads(roads);
+	//RoadCreator* roadCreator = new RoadCreator();
+	//roadCreator->makeRenderableRoads(roads);
 
-	objects.push_back(roadCreator);
+	//objects.push_back(roadCreator);
 
 }
 
@@ -220,21 +220,21 @@ std::vector<LandPlot> Scene::subdividePlot(LandPlot p) {
 
 	float plotXSize = p.bot_right.x - p.bot_left.x;
 	if (plotXSize > maxSize) {
-		xSubdivisions = round(plotXSize / maxSize);
+		xSubdivisions = floor(plotXSize / maxSize);
 	}
 
 	float plotYSize = p.top_left.y - p.bot_left.y;
 	if (plotYSize > maxSize) {
-		ySubdivisions = round(plotYSize / maxSize);
+		ySubdivisions = floor(plotYSize / maxSize);
 	}
 
 	glm::vec2 origin = p.bot_left;
 	glm::vec2 originalOrigin = origin;
+	glm::vec2 buildingSize = glm::vec2(floor(plotXSize / xSubdivisions), floor(plotYSize / ySubdivisions));
 	glm::vec2 spacingBetweenBuildings = glm::vec2(
-			std::max((plotXSize - xSubdivisions * maxSize) / (xSubdivisions + 1), 0.0f),
-			std::max((plotYSize - ySubdivisions * maxSize) / (ySubdivisions + 1), 0.0f)
+			(plotXSize - xSubdivisions * buildingSize.x) / (xSubdivisions + 1),
+			(plotYSize - ySubdivisions * buildingSize.y) / (ySubdivisions + 1)
 			);
-	glm::vec2 buildingSize = glm::vec2(plotXSize / xSubdivisions, plotYSize / ySubdivisions);
 
 	for (int i = 0; i < xSubdivisions; i++) {
 		origin.y = originalOrigin.y;

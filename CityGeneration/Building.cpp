@@ -4,7 +4,7 @@
 
 
 Building::Building(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight):
-	centerPosition(center), size(size), minHeight(minHeight), maxHeight(maxHeight)
+	centerPosition(center), size(size * .98f), minHeight(minHeight), maxHeight(maxHeight)
 {
 	setPosition(center);
 }
