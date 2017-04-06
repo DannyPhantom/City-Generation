@@ -3,7 +3,8 @@
 #include <random>
 
 
-Building::Building(glm::vec3 center, glm::vec3 size): centerPosition(center), size(size)
+Building::Building(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight):
+	centerPosition(center), size(size), minHeight(minHeight), maxHeight(maxHeight)
 {
 	setPosition(center);
 }

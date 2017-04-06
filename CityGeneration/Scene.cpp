@@ -15,27 +15,28 @@
 #include "Grid.h"
 #include "Randomizer.h"
 #include "Road.h"
+#include <algorithm>
 
 Texture *Scene::windowsTexture = NULL;
 std::vector<LandPlot> plots;
 std::vector<Road *> roads;
 
-Scene::Scene()
-{
+const float Scene::minBuildingHeight = 20;
+const float Scene::maxBuildingHeight = 300;
+const float Scene::citySize = 2000;
+
+Scene::Scene() {
 }
 
-Scene::~Scene()
-{
+Scene::~Scene() {
 }
 
 void Scene::initializeScene() {
 	//define the projection matrix (it's constant and never changes)
-	projectionMatrix = glm::perspective(
-		glm::radians(90.0f),
-		1.0f * SceneParameters::getScreenWidth() / SceneParameters::getScreenHeight(),
-		SceneParameters::getZNear(),
-		SceneParameters::getZFar()
-	);
+	projectionMatrix = glm::perspective(glm::radians(90.0f),
+			1.0f * SceneParameters::getScreenWidth()
+					/ SceneParameters::getScreenHeight(),
+			SceneParameters::getZNear(), SceneParameters::getZFar());
 
 	//define the inverse of the projection matrix
 	inverseProjectionMatrix = glm::inverse(projectionMatrix);
@@ -48,14 +49,17 @@ void Scene::initializeScene() {
 }
 
 void Scene::renderPhong() {
-	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+	std::chrono::high_resolution_clock::time_point t1 =
+			std::chrono::high_resolution_clock::now();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glUseProgram(basicPhongShader);
 
-	glUniformMatrix4fv(glGetUniformLocation(basicPhongShader, "ProjectionMatrix"), 1, false, &(getProjectionMatrix()[0][0]));
+	glUniformMatrix4fv(
+			glGetUniformLocation(basicPhongShader, "ProjectionMatrix"), 1,
+			false, &(getProjectionMatrix()[0][0]));
 
 	for (SceneObject *obj : objects) {
 		obj->draw(basicPhongShader, cam.getViewMatrix());
@@ -102,8 +106,11 @@ void Scene::renderScene(float dt) {
 
 void Scene::loadShaders() {
 	ShaderLoader loader;
-	basicPhongShader = loader.loadShader("CityGeneration/Shaders/PhongVertexShader.glsl", "CityGeneration/Shaders/PhongFragmentShader.glsl");
-	shader2D = loader.loadShader("CityGeneration/Shaders/Shader2DVertex.glsl", "CityGeneration/Shaders/Shader2DFragment.glsl");
+	basicPhongShader = loader.loadShader(
+			"CityGeneration/Shaders/PhongVertexShader.glsl",
+			"CityGeneration/Shaders/PhongFragmentShader.glsl");
+	shader2D = loader.loadShader("CityGeneration/Shaders/Shader2DVertex.glsl",
+			"CityGeneration/Shaders/Shader2DFragment.glsl");
 }
 
 void Scene::loadOtherStuff() {
@@ -116,37 +123,47 @@ void Scene::loadObjects() {
 	//objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
 	//objects.push_back(new ComplexBlockBuilding(glm::vec3(100, 0, 0), glm::vec3(40, 0, 40)));
 
-	Grid grid(-1000, -1000, 2000, 2000);
+	Grid grid(-citySize / 2.0f, -citySize / 2.0f, citySize, citySize);
 	GridFactory fact;
 	GridHistory hist = fact.generateCustomSubGrids(&grid, 11);
 	plots = hist.getBuildingSpots();
-
 
 	/*TODO: Subdivide plots that are too big*/
 
 	int i = 0;
 	for (LandPlot plot : plots) {
-		std::cout << "Plot " << i << ": BL = (" << plot.bot_left.x << ", " << plot.bot_left.y
-				<<"); TL = (" << plot.top_left.x << ", " << plot.top_left.y
-				<<"); TR = (" << plot.top_right.x << ", " << plot.top_right.y
-				<<"); BR = (" << plot.bot_right.x << ", " << plot.bot_right.y << "\n";
-				i++;
-		glm::vec2 center = (plot.bot_left + plot.top_right) / 2.0f;
-		glm::vec2 size = glm::vec2(plot.bot_right.x - plot.bot_left.x, plot.top_left.y - plot.bot_left.y);
-		Building *b = NULL;
-		float buildingType = Randomizer::getRandomFloat(0.0f, 1.0f);
-		if (buildingType < 0.33f) {
-			b = new RoundBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
+		for (LandPlot p : subdividePlot(plot)) {
+			std::cout << "p " << i << ": BL = (" << p.bot_left.x << ", "
+					<< p.bot_left.y << "); TL = (" << p.top_left.x << ", "
+					<< p.top_left.y << "); TR = (" << p.top_right.x << ", "
+					<< p.top_right.y << "); BR = (" << p.bot_right.x << ", "
+					<< p.bot_right.y << "\n";
+			i++;
+			glm::vec2 center = (p.bot_left + p.top_right) / 2.0f;
+			glm::vec2 size = glm::vec2(p.bot_right.x - p.bot_left.x,
+					p.top_left.y - p.bot_left.y);
+			std::pair<float, float> buildingHeight =
+					getBuildingHeightBasedOnLocation(center);
+			float buildingHeightMin = buildingHeight.first;
+			float buildingHeightMax = buildingHeight.second;
+
+			Building *b = NULL;
+			float buildingType = Randomizer::getRandomFloat(0.0f, 1.0f);
+			if (buildingType < 0.33f) {
+				b = new RoundBuilding(glm::vec3(center.x, 0, center.y),
+						glm::vec3(size.x, 0, size.y), buildingHeightMin,
+						buildingHeightMax);
+			} else if (buildingType < 0.66f) {
+				b = new SimpleBuilding(glm::vec3(center.x, 0, center.y),
+						glm::vec3(size.x, 0, size.y), buildingHeightMin,
+						buildingHeightMax);
+			} else if (buildingType <= 1) {
+				b = new ComplexBlockBuilding(glm::vec3(center.x, 0, center.y),
+						glm::vec3(size.x, 0, size.y), buildingHeightMin,
+						buildingHeightMax);
+			}
+			objects.push_back(b);
 		}
-		else if (buildingType < 0.66f) {
-			b = new SimpleBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
-		}
-		else if (buildingType <= 1) {
-			b = new ComplexBlockBuilding(glm::vec3(center.x, 0, center.y), glm::vec3(size.x, 0, size.y));
-		}
-		objects.push_back(b);
-		/*std::cout << "Pos : " << center.x << " " << center.y << std::endl;
-		std::cout << "Size : " << size.x << " " << size.y << std::endl;*/
 	}
 
 	std::vector<Grid *> grids = hist.getLastLevelOfGrid();
@@ -172,4 +189,68 @@ glm::mat4 Scene::getProjectionMatrix() {
 
 glm::mat4 Scene::getInverseProjectionMatrix() {
 	return inverseProjectionMatrix;
+}
+
+std::pair<float, float> Scene::getBuildingHeightBasedOnLocation(
+		glm::vec2 buildingCenter) {
+	float distanceFromCenter = glm::length(buildingCenter);
+	//downtown
+	if (distanceFromCenter < citySize / 5) {
+		return std::make_pair(
+				minBuildingHeight
+						+ (maxBuildingHeight - minBuildingHeight) * 0.6f,
+				maxBuildingHeight);
+		//midtown
+	} else if (distanceFromCenter < citySize / 3) {
+		return std::make_pair(
+				minBuildingHeight
+						+ (maxBuildingHeight - minBuildingHeight) * 0.3f,
+				maxBuildingHeight * 0.6);
+		//border-ish of the city
+	} else {
+		return std::make_pair(minBuildingHeight, maxBuildingHeight * 0.3);
+	}
+}
+
+std::vector<LandPlot> Scene::subdividePlot(LandPlot p) {
+	std::vector<LandPlot> newLandPlots;
+	int xSubdivisions = 1;
+	int ySubdivisions = 1;
+	float maxSize = 0.1 * citySize;
+
+	float plotXSize = p.bot_right.x - p.bot_left.x;
+	if (plotXSize > maxSize) {
+		xSubdivisions = round(plotXSize / maxSize);
+	}
+
+	float plotYSize = p.top_left.y - p.bot_left.y;
+	if (plotYSize > maxSize) {
+		ySubdivisions = round(plotYSize / maxSize);
+	}
+
+	glm::vec2 origin = p.bot_left;
+	glm::vec2 originalOrigin = origin;
+	glm::vec2 spacingBetweenBuildings = glm::vec2(
+			std::max((plotXSize - xSubdivisions * maxSize) / (xSubdivisions + 1), 0.0f),
+			std::max((plotYSize - ySubdivisions * maxSize) / (ySubdivisions + 1), 0.0f)
+			);
+	glm::vec2 buildingSize = glm::vec2(plotXSize / xSubdivisions, plotYSize / ySubdivisions);
+
+	for (int i = 0; i < xSubdivisions; i++) {
+		origin.y = originalOrigin.y;
+		origin.x += spacingBetweenBuildings.x;
+		for (int j = 0; j < ySubdivisions; j++) {
+			origin.y += spacingBetweenBuildings.y;
+			LandPlot plot;
+			plot.bot_left = origin;
+			plot.bot_right = glm::vec2(origin.x + buildingSize.x, origin.y);
+			plot.top_left = glm::vec2(origin.x, origin.y + buildingSize.y);
+			plot.top_right = glm::vec2(origin.x + buildingSize.x, origin.y + buildingSize.y);
+			newLandPlots.push_back(plot);
+			origin.y += buildingSize.y;
+		}
+		origin.x += buildingSize.x;
+	}
+
+	return newLandPlots;
 }

@@ -3,7 +3,7 @@
 #include "Scene.h"
 #include "Randomizer.h"
 
-SimpleBuilding::SimpleBuilding(glm::vec3 center, glm::vec3 size) : BlockBuilding(center, size)
+SimpleBuilding::SimpleBuilding(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight) : BlockBuilding(center, size, minHeight, maxHeight)
 {
 	create();
 }

@@ -8,7 +8,7 @@
 #include "BoundingBox.h"
 
 
-ComplexBlockBuilding::ComplexBlockBuilding(glm::vec3 center, glm::vec3 size) : BlockBuilding(center, size)
+ComplexBlockBuilding::ComplexBlockBuilding(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight) : BlockBuilding(center, size, minHeight, maxHeight)
 {
 	create();
 }

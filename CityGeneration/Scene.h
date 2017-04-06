@@ -8,6 +8,7 @@
 #include <string>
 
 class Texture;
+struct LandPlot;
 
 /*
 	The main class of the program.
@@ -18,6 +19,9 @@ class Scene
 public:
 	static Texture *windowsTexture;
 
+	static const float minBuildingHeight;
+	static const float maxBuildingHeight;
+	static const float citySize;
 
 	Scene();
 	~Scene();
@@ -77,6 +81,10 @@ private:
 		Renders the scene using phong shading
 	*/
 	void renderPhong();
+
+	std::pair<float, float> getBuildingHeightBasedOnLocation(glm::vec2 buildingCenter);
+
+	std::vector<LandPlot> subdividePlot(LandPlot p);
 
 private:
 	std::vector<SceneObject *> objects;

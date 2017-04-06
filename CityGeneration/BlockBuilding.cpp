@@ -4,7 +4,7 @@
 #include "Scene.h"
 
 
-BlockBuilding::BlockBuilding(glm::vec3 center, glm::vec3 size) : Building(center, size)
+BlockBuilding::BlockBuilding(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight) : Building(center, size, minHeight, maxHeight)
 {
 }
 

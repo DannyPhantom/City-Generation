@@ -8,7 +8,7 @@
 #define NUM_OF_POINTS_ON_CIRCLE (40)
 #define CIRCLE_STEP (TWO_PI / NUM_OF_POINTS_ON_CIRCLE)
 
-RoundBuilding::RoundBuilding(glm::vec3 center, glm::vec3 size) : Building(center, size)
+RoundBuilding::RoundBuilding(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight) : Building(center, size, minHeight, maxHeight)
 {
 	create();
 }

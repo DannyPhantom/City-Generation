@@ -9,7 +9,7 @@ protected:
 	void generateUVsForBlock(glm::vec3 size, std::vector<glm::vec2>& uvs);
 
 public:
-	BlockBuilding(glm::vec3 center, glm::vec3 size);
+	BlockBuilding(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight);
 	~BlockBuilding();
 
 	virtual void create() = 0;
