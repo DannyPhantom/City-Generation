@@ -7,7 +7,7 @@ class ComplexBlockBuilding :
 {
 private:
 public:
-	ComplexBlockBuilding(glm::vec3 center, glm::vec3 size);
+	ComplexBlockBuilding(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight);
 	~ComplexBlockBuilding();
 
 	void create();

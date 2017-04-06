@@ -10,7 +10,7 @@ class SimpleBuilding :
 private:
 	void generateRoof(glm::vec3 halfSize, float heightStart, float heightEnd);
 public:
-	SimpleBuilding(glm::vec3 center, glm::vec3 size);
+	SimpleBuilding(glm::vec3 center, glm::vec3 size, float minHeight, float maxHeight);
 	~SimpleBuilding();
 
 	void create();
