@@ -128,17 +128,8 @@ void Scene::loadObjects() {
 	GridHistory hist = fact.generateCustomSubGrids(&grid, 11);
 	plots = hist.getBuildingSpots();
 
-	/*TODO: Subdivide plots that are too big*/
-
-	int i = 0;
 	for (LandPlot plot : plots) {
 		for (LandPlot p : subdividePlot(plot)) {
-			std::cout << "p " << i << ": BL = (" << p.bot_left.x << ", "
-					<< p.bot_left.y << "); TL = (" << p.top_left.x << ", "
-					<< p.top_left.y << "); TR = (" << p.top_right.x << ", "
-					<< p.top_right.y << "); BR = (" << p.bot_right.x << ", "
-					<< p.bot_right.y << "\n";
-			i++;
 			glm::vec2 center = (p.bot_left + p.top_right) / 2.0f;
 			glm::vec2 size = glm::vec2(p.bot_right.x - p.bot_left.x,
 					p.top_left.y - p.bot_left.y);

@@ -102,9 +102,8 @@ void ComplexBlockBuilding::create() {
 	//translate all the points such that the model is in the center of 0,0,0
 	glm::vec3 translation = -(boundingBox.getMax() + boundingBox.getMin()) / 2.0f;
 
-	std::vector<Mesh *> *meshes = getMeshes();
-	for (int i = 0; i < meshes->size(); i++) {
-		std::vector<glm::vec3> *vertices = (*meshes)[i]->getVertices();
+	for (int i = 0; i < meshes.size(); i++) {
+		std::vector<glm::vec3> *vertices = meshes[i]->getVertices();
 		for (int j = 0; j < vertices->size(); j++) {
 			(*vertices)[j] += translation;
 		}
@@ -116,7 +115,32 @@ void ComplexBlockBuilding::create() {
 	scale.z *= size.z;
 	scale.y = 1;
 	setScale(scale);
+	scaleUVs(scale);
 
 	setupVBOs();
 	setupVAOs();
+}
+
+void ComplexBlockBuilding::scaleUVs(glm::vec3 scale) {
+	glm::vec2 s((scale.x + scale.z) / 2.0f, 1);
+	glm::vec2 minUV(100, 100);
+
+	for (int i = 0; i < meshes.size(); i++) {
+		std::vector<glm::vec2> *uvs = meshes[i]->getUVs();
+		for (int j = 0; j < uvs->size(); j++) {
+			if ((*uvs)[j].x < minUV.x) {
+				minUV.x = (*uvs)[j].x;
+			}
+			if ((*uvs)[j].y < minUV.y) {
+				minUV.y = (*uvs)[j].y;
+			}
+		}
+	}
+
+	for (int i = 0; i < meshes.size(); i++) {
+		std::vector<glm::vec2> *uvs = meshes[i]->getUVs();
+		for (int j = 0; j < uvs->size(); j++) {
+			(*uvs)[j] = minUV + ((*uvs)[j] - minUV) * s;
+		}
+	}
 }

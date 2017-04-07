@@ -31,6 +31,9 @@ void BlockBuilding::generateUVsForBlock(glm::vec3 size, std::vector<glm::vec2>& 
 	if (percentageOfTextureUsed.y > 1) percentageOfTextureUsed.y = 1;
 	glm::vec2 percentageOfTextureLeft = glm::vec2(1, 1) - percentageOfTextureUsed;
 	glm::vec2 uvOffset = glm::vec2(Randomizer::getRandomFloat(0, percentageOfTextureLeft.x), Randomizer::getRandomFloat(0, percentageOfTextureLeft.y));
+	//clamp to nearest window
+	uvOffset.x -= fmod(uvOffset.x, (1.0f / WindowsTextureGenerator::numOfWindows));
+	uvOffset.y -= fmod(uvOffset.y, (1.0f / WindowsTextureGenerator::numOfWindows));
 
 	//front
 	float xRight = size.x / ((2 * size.x + 2 * size.z));

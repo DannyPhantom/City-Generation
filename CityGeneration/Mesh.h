@@ -40,9 +40,14 @@ public:
 	std::vector<GLuint> *getIndices() { return &indices; }
 
 	/*
-		Returns vertices for the mesh
+	Returns vertices for the mesh
 	*/
 	std::vector<glm::vec3> *getVertices() { return &vertices; }
+
+	/*
+	Returns uvs for the mesh
+	*/
+	std::vector<glm::vec2> *getUVs() { return &uvs; }
 
 	/*
 		Returns number of triangles for the mesh
