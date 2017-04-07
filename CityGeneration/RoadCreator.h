@@ -27,7 +27,7 @@ public:
 	void makeRenderableRoads(vector<Road*> roads);
 
 private:
-	float medianWidth = 1.0;
+	float medianWidth = 4.0;
 	float roadWidth = 5.0;
 
 
