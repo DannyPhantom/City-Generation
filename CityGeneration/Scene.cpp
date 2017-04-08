@@ -55,6 +55,8 @@ void Scene::renderPhong() {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	//skybox
+
 	glUseProgram(basicPhongShader);
 
 	glUniformMatrix4fv(
@@ -116,6 +118,15 @@ void Scene::loadShaders() {
 void Scene::loadOtherStuff() {
 	WindowsTextureGenerator g;
 	windowsTexture = g.generateTexture();
+
+	vector<const GLchar*> faces;
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_rt.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_lf.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_up.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_dn.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_bk.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_ft.tga");
+	s_box.loadCubemap(faces);
 }
 
 void Scene::loadObjects() {

@@ -4,6 +4,7 @@
 #include "RoadCreator.h"
 #include "SceneObject.h"
 #include "Camera.h"
+#include "Skybox.h"
 #include <chrono>
 #include <string>
 
@@ -88,6 +89,8 @@ private:
 
 private:
 	std::vector<SceneObject *> objects;
+
+	Skybox s_box;
 
 	glm::mat4 projectionMatrix;
 	glm::mat4 inverseProjectionMatrix;
