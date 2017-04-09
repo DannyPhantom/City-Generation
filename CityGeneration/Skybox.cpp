@@ -9,14 +9,56 @@
 
 Skybox::Skybox() {
 	// TODO Auto-generated constructor stub
-
+	create();
 }
 
 Skybox::~Skybox() {
 	// TODO Auto-generated destructor stub
 }
 
-bool Skybox::loadCubemap(std::vector<const GLchar*> faces)
+void Skybox::create()
+{
+	const glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+	std::vector<glm::vec3> vertices, normals;
+	std::vector<glm::vec2> uvs;
+	std::vector<glm::vec4> colors;
+	std::vector<GLuint> indices;
+
+	for(int i = 0; i < skyboxVertices.size(); i+=3)
+	{
+		vertices.push_back(skyboxVertices[i]);
+		vertices.push_back(skyboxVertices[i+1]);
+		vertices.push_back(skyboxVertices[i+2]);
+		glm::vec3 normal = -glm::cross(skyboxVertices[i+1] - skyboxVertices[i], skyboxVertices[i+2] - skyboxVertices[i]);
+
+		normals.push_back(normal);
+		normals.push_back(normal);
+		normals.push_back(normal);
+	}
+
+	for (int j = 0; j < vertices.size(); j++)
+	{
+		colors.push_back(color);
+		indices.push_back(j);
+		uvs.push_back(glm::vec2(0.0f, 0.0f));
+	}
+
+	vector<const GLchar*> faces;
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_rt.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_lf.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_up.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_dn.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_bk.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_ft.tga");
+
+	Texture *tex = loadCubemap(faces);
+
+	Mesh *m = new Mesh(vertices, uvs, colors, normals, indices, tex, 12);
+	addMesh(m);
+}
+
+Texture* Skybox::loadCubemap(std::vector<const GLchar*> faces)
 {
     GLuint textureID;
     glGenTextures(1, &textureID);
@@ -44,67 +86,50 @@ bool Skybox::loadCubemap(std::vector<const GLchar*> faces)
 			loaded = false;
 		}
     }
-    if(loaded)
-    {
     	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    	Texture *text(GL_TEXTURE_CUBE_MAP,  textureID);
     	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-    	textureObj = textureID;
-    	return true;
-    }
-    else
-    {
-    	return false;
-    }
+    	stbi_image_free(image);
+
+    	//textureObj = textureID;
+    	return text;
+
 }
 
-/*
- * GLfloat skyboxVertices[] = {
-    // Positions
-    -1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
+void Skybox::draw(GLuint program, glm::mat4 viewMatrix)
+{
+	//setup general uniforms
+	glUniform1i(glGetUniformLocation(program, "skybox"), 0);
+	glm::mat4 mvMatrix = viewMatrix * modelMatrix;
+	glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(mvMatrix)));
+	glUniformMatrix4fv(glGetUniformLocation(program, "ModelViewMatrix"), 1, false, &mvMatrix[0][0]);
+	glUniformMatrix3fv(glGetUniformLocation(program, "NormalMatrix"), 1, false, &normalMatrix[0][0]);
 
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
+	//process and draw one mesh at a time
+	for (unsigned int i = 0; i < meshes.size(); i++) {
+		Mesh *mesh = meshes.at(i);
+		//bind the texture for the object if there is one
+		if (mesh->hasTexture()) {
+			mesh->getTexture()->Bind(GL_TEXTURE0);
+			//glUniform1i(glGetUniformLocation(program, "TextureValid"), true);
+		}
+		/*else {
+			glUniform1i(glGetUniformLocation(program, "TextureValid"), false);
+		}*/
+		// Draw mesh
+		glBindVertexArray(mesh->getVAO());
+		glDrawElements(GL_TRIANGLES, mesh->getIndices()->size(), GL_UNSIGNED_INT, 0);
 
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-
-    -1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f
-};
- */
+		//disable everything
+		glBindVertexArray(0);
+		if (mesh->hasTexture()) {
+			mesh->getTexture()->unBind(GL_TEXTURE0);
+		}
+	}
+}

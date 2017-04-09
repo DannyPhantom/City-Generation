@@ -19,6 +19,7 @@ class Scene
 {
 public:
 	static Texture *windowsTexture;
+	static Texture *skyboxTexture;
 
 	static const float minBuildingHeight;
 	static const float maxBuildingHeight;
@@ -98,6 +99,7 @@ private:
 	//shaders
 	GLuint basicPhongShader;
 	GLuint shader2D;
+	GLuint skyboxShader;
 	Camera cam;
 };
 
