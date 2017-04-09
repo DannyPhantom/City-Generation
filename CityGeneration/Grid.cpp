@@ -160,14 +160,8 @@ vector<Grid*> Grid::splitGrid(double roadWidth, double splitLength, Axis axis)
 		glm::vec2 center1 = glm::vec2(grid1->originX + grid1->w/2.0f, grid1->originY + grid1->h/2.0f);
 		glm::vec2 size1 = glm::vec2(grid1->w, grid1->h);
 
-		std::cout << "Pos : " << center1.x << " " << center1.y << std::endl;
-		std::cout << "Size : " << size1.x << " " << size1.y << std::endl;
-
 		glm::vec2 center2 = glm::vec2(grid2->originX + grid2->w/2.0f, grid2->originY + grid2->h/2.0f);
 		glm::vec2 size2 = glm::vec2(grid2->w, grid2->h);
-
-		std::cout << "Pos : " << center2.x << " " << center2.y << std::endl;
-		std::cout << "Size : " << size2.x << " " << size2.y << std::endl << std::endl;
 
 		newGrids.push_back(grid1);
 		newGrids.push_back(grid2);
@@ -190,14 +184,8 @@ vector<Grid*> Grid::splitGrid(double roadWidth, double splitLength, Axis axis)
 		glm::vec2 center1 = glm::vec2(grid1->originX + grid1->w/2.0f, grid1->originY + grid1->h/2.0f);
 		glm::vec2 size1 = glm::vec2(grid1->w, grid1->h);
 
-		std::cout << "Pos : " << center1.x << " " << center1.y << std::endl;
-		std::cout << "Size : " << size1.x << " " << size1.y << std::endl;
-
 		glm::vec2 center2 = glm::vec2(grid2->originX + grid2->w/2.0f, grid2->originY + grid2->h/2.0f);
 		glm::vec2 size2 = glm::vec2(grid2->w, grid2->h);
-
-		std::cout << "Pos : " << center2.x << " " << center2.y << std::endl;
-		std::cout << "Size : " << size2.x << " " << size2.y << std::endl << std::endl;
 
 		newGrids.push_back(grid1);
 		newGrids.push_back(grid2);

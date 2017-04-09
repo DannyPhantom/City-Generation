@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include <chrono>
 #include <string>
+#include "DynamicRoadGeneration/Square.h"
+#include "DynamicRoadGeneration/Line.h"
 
 class Texture;
 struct LandPlot;
@@ -22,8 +24,10 @@ public:
 	static const float minBuildingHeight;
 	static const float maxBuildingHeight;
 	static const float citySize;
+	static const int numOfSubdivisions;
+	static const float majorRoadSize;
 
-	Scene();
+	Scene(std::vector<Square*> userGrids);
 	~Scene();
 
 	/*
@@ -96,5 +100,7 @@ private:
 	GLuint basicPhongShader;
 	GLuint shader2D;
 	Camera cam;
+
+	std::vector<Square*> userGrids;
 };
 

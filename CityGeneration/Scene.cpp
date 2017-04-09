@@ -23,9 +23,12 @@ std::vector<Road *> roads;
 
 const float Scene::minBuildingHeight = 20;
 const float Scene::maxBuildingHeight = 300;
-const float Scene::citySize = 2000;
+const float Scene::citySize = 1000;
+const int Scene::numOfSubdivisions = 12;
+const float Scene::majorRoadSize = 30;
 
-Scene::Scene() {
+Scene::Scene(std::vector<Square*> grids) {
+	userGrids = grids;
 }
 
 Scene::~Scene() {
@@ -96,6 +99,17 @@ void Scene::renderPhong() {
 			glVertex3f(r->origin_x + r->length, 0, r->origin_y);
 		glEnd();
 	}
+
+	glColor3f(1, 0, 0);
+	for (Square *sq: userGrids) {
+		glBegin(GL_LINE_STRIP);
+		glVertex3f(sq->left->getBot()->x * citySize, 0.3, sq->left->getBot()->y * citySize);
+		glVertex3f(sq->left->getTop()->x * citySize, 0.3, sq->left->getTop()->y * citySize);
+		glVertex3f(sq->top->getRight()->x * citySize, 0.3, sq->top->getRight()->y * citySize);
+		glVertex3f(sq->right->getBot()->x * citySize, 0.3, sq->right->getBot()->y * citySize);
+		glVertex3f(sq->left->getBot()->x * citySize, 0.3, sq->left->getBot()->y * citySize);
+		glEnd();
+	}
 }
 
 void Scene::renderScene(float dt) {
@@ -123,51 +137,67 @@ void Scene::loadObjects() {
 	//objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
 	//objects.push_back(new ComplexBlockBuilding(glm::vec3(100, 0, 0), glm::vec3(40, 0, 40)));
 
-	Grid grid(-citySize / 2.0f, -citySize / 2.0f, citySize, citySize);
-	GridFactory fact;
-	GridHistory hist = fact.generateCustomSubGrids(&grid, 11);
-	plots = hist.getBuildingSpots();
+	float maxArea = 4 * citySize * citySize;
 
-	for (LandPlot plot : plots) {
-		for (LandPlot p : subdividePlot(plot)) {
-			glm::vec2 center = (p.bot_left + p.top_right) / 2.0f;
-			glm::vec2 size = glm::vec2(p.bot_right.x - p.bot_left.x,
+	for (Square *userGrid : userGrids) {
+		glm::vec2 start = *userGrid->bottom->getLeft() * citySize;
+		glm::vec2 size = (*userGrid->top->getRight() - *userGrid->bottom->getLeft()) * citySize;
+		float gridArea = size.x * size.y;
+
+		Grid grid(start.x + majorRoadSize / 2, start.y + majorRoadSize / 2, size.x - majorRoadSize, size.y - majorRoadSize);
+		GridFactory fact;
+		GridHistory hist = fact.generateCustomSubGrids(&grid, std::max(numOfSubdivisions - floor(log(maxArea / gridArea)) * 2, 0.0f));
+		std::vector<LandPlot> plots = hist.getBuildingSpots();
+
+		for (LandPlot plot : plots) {
+			for (LandPlot p : subdividePlot(plot)) {
+				::plots.push_back(p);
+				glm::vec2 center = (p.bot_left + p.top_right) / 2.0f;
+				glm::vec2 size = glm::vec2(p.bot_right.x - p.bot_left.x,
 					p.top_left.y - p.bot_left.y);
-			std::pair<float, float> buildingHeight =
+
+				if (size.x == 0 || size.y == 0) {
+					continue;
+				}
+
+				std::pair<float, float> buildingHeight =
 					getBuildingHeightBasedOnLocation(center);
-			float buildingHeightMin = buildingHeight.first;
-			float buildingHeightMax = buildingHeight.second;
+				float buildingHeightMin = buildingHeight.first;
+				float buildingHeightMax = buildingHeight.second;
 
-			Building *b = NULL;
-			float buildingType = Randomizer::getRandomFloat(0.0f, 1.0f);
-			if (buildingType < 0.33f) {
-				b = new RoundBuilding(glm::vec3(center.x, 0, center.y),
+				Building *b = NULL;
+				float buildingType = Randomizer::getRandomFloat(0.0f, 1.0f);
+				if (buildingType < 0.33f) {
+					b = new RoundBuilding(glm::vec3(center.x, 0, center.y),
 						glm::vec3(size.x, 0, size.y), buildingHeightMin,
 						buildingHeightMax);
-			} else if (buildingType < 0.66f) {
-				b = new SimpleBuilding(glm::vec3(center.x, 0, center.y),
+				}
+				else if (buildingType < 0.66f) {
+					b = new SimpleBuilding(glm::vec3(center.x, 0, center.y),
 						glm::vec3(size.x, 0, size.y), buildingHeightMin,
 						buildingHeightMax);
-			} else if (buildingType <= 1) {
-				b = new ComplexBlockBuilding(glm::vec3(center.x, 0, center.y),
+				}
+				else if (buildingType <= 1) {
+					b = new ComplexBlockBuilding(glm::vec3(center.x, 0, center.y),
 						glm::vec3(size.x, 0, size.y), buildingHeightMin,
 						buildingHeightMax);
+				}
+				objects.push_back(b);
 			}
-			objects.push_back(b);
 		}
-	}
 
-	std::vector<Grid *> grids = hist.getLastLevelOfGrid();
-	for (Grid *g : grids) {
-		for (Road *r : g->getRoads()) {
-			roads.push_back(r);
+		std::vector<Grid *> grids = hist.getLastLevelOfGrid();
+		for (Grid *g : grids) {
+			for (Road *r : g->getRoads()) {
+				roads.push_back(r);
+			}
 		}
+
+		//RoadCreator* roadCreator = new RoadCreator();
+		//roadCreator->makeRenderableRoads(roads);
+
+		//objects.push_back(roadCreator);
 	}
-
-	//RoadCreator* roadCreator = new RoadCreator();
-	//roadCreator->makeRenderableRoads(roads);
-
-	//objects.push_back(roadCreator);
 
 }
 

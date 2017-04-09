@@ -3,6 +3,7 @@
 #include <math.h>
 #include "Scene.h"
 #include "DynamicRoadGeneration/DynamicRoadGenerator.h"
+#include "DynamicRoadGeneration/Square.h"
 #include "Camera.h"
 #include "SceneParameters.h"
 #include <stdlib.h>     /* srand, rand */
@@ -14,6 +15,17 @@ DynamicRoadGenerator *g = NULL;
 Scene *s = NULL;
 bool closeProgram = false;
 int lastFrameTime = 0;
+
+void createScene() {
+	std::vector<Square *> squares = g->getSquares();
+	delete g;
+
+	glutSetCursor(GLUT_CURSOR_NONE);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	s = new Scene(squares);
+	s->initializeScene();
+}
 
 /*
 Main program loop.
@@ -32,7 +44,12 @@ void mainLoop(void) {
 		s->renderScene(dt / 1000.0);
 	}
 	else {
-		g->draw();
+		if (g->isDone()) {
+			createScene();
+		}
+		else {
+			g->draw();
+		}
 	}
 
 	//swap buffers
@@ -97,7 +114,7 @@ Callback method for the mouse click
 @param y y position of the click
 */
 void mouseClick(int button, int state, int x, int y) {
-	if (s == NULL) {
+	if (s == NULL && state == GLUT_DOWN) {
 		int halfWidth = SceneParameters::getScreenWidth() >> 1;
 		int halfHeight = SceneParameters::getScreenHeight() >> 1;
 		g->processMouseClick((1.0f * x - halfWidth) / SceneParameters::getScreenWidth(), (1.0f * y - halfHeight) / SceneParameters::getScreenHeight());
@@ -129,10 +146,16 @@ void pressKey(unsigned char key, int x, int y) {
 		case 'd':
 			s->getCamera()->setMoveCameraRight(true);
 			break;
-			//exit the program (escape)
+		}
+	}
+	else {
+		//enter
+		if (key == 13) {
+			g->stopCreating();
 		}
 	}
 
+	//exit the program (escape)
 	if (key == 27) {
 		closeProgram = true;
 	}
@@ -183,7 +206,6 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(SceneParameters::getScreenWidth(), SceneParameters::getScreenHeight());
 	glutCreateWindow("City Generation");
-	//glutSetCursor(GLUT_CURSOR_NONE);
 
 	//setup callbacks
 	glutDisplayFunc(mainLoop);
@@ -198,13 +220,10 @@ int main(int argc, char **argv) {
 
 	//initialize opengl functions
 	glewInit();
-	//glEnable(GL_TEXTURE_2D);
-	//glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 
 	//initialize the scene
 	g = new DynamicRoadGenerator();
-	//s.initializeScene();
 
 	//start the main loop
 	glutMainLoop();

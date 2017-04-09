@@ -6,14 +6,14 @@ Camera::Camera()
 {
 	position = glm::vec3(-20, 50, 0);
 	phi = 0;
-	theta = 0;
+	theta = 270;
 	shouldBeMovedForward = false;
 	shouldBeMovedBackwards = false;
 	cameraMovementSpeed = 150.0f;
 
-	direction.x = cos(glm::radians(phi)) * cos(glm::radians(theta));
+	direction.x = cos(glm::radians(phi)) * sin(glm::radians(theta));
 	direction.y = sin(glm::radians(phi));
-	direction.z = cos(glm::radians(phi)) * sin(glm::radians(theta));
+	direction.z = cos(glm::radians(phi)) * cos(glm::radians(theta));
 	direction = glm::normalize(direction);
 }
 
@@ -26,7 +26,7 @@ void Camera::addAngles(float phi, float theta) {
 	this->phi -= phi;
 	this->theta += theta;
 
-	//set limits to the view direction (in both horizontal and vertical directions)
+	//set limits to the view direction
 	if (this->phi < -70) {
 		this->phi = -70;
 	}
@@ -78,6 +78,8 @@ void Camera::update(float dt) {
 		glm::vec3 right = glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
 		position += right * cameraMovementSpeed  * dt;
 	}
+
+	std::cout << position.x << " " << position.y << " " << position.z << " " << std::endl;
 }
 
 glm::vec3 Camera::getPosition() {

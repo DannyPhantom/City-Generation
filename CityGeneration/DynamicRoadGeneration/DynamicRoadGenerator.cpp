@@ -2,6 +2,8 @@
 #include "Line.h"
 #include "Square.h"
 #include "../Libraries/glew/glew.h"
+#include <iostream>
+#include <algorithm>
 
 
 #define TWO_PI 6.28318530718
@@ -29,18 +31,14 @@ DynamicRoadGenerator::DynamicRoadGenerator()
 	l4->start = glm::vec2(-corner, -corner);
 	l4->end = glm::vec2(-corner, corner);
 
-	lines.push_back(l1);
-	lines.push_back(l2);
-	lines.push_back(l3);
-	lines.push_back(l4);
-
 	Square *sq = new Square();
-	sq->addLine(l1);
-	sq->addLine(l2);
-	sq->addLine(l3);
-	sq->addLine(l4);
+	sq->top = l1;
+	sq->right = l2;
+	sq->bottom = l3;
+	sq->left = l4;
 
-	squares.push_back(sq);
+	squares.push_back(sq); 
+	creationInProcess = true;
 }
 
 
@@ -59,29 +57,27 @@ void DynamicRoadGenerator::renderPoint(glm::vec2 pos) {
 void DynamicRoadGenerator::draw() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(1.0, -1.0, 1.0f);
 
-	for (Line *line : lines) {
-		glColor3f(1, 1, 0);
-		glBegin(GL_LINES);
-		glVertex3f(line->start.x, line->start.y, 0);
-		glVertex3f(line->end.x, line->end.y, 0);
-		glEnd();
+	for (Square *sq : squares) {
+		for (Line *line : sq->getLines()) {
+			glColor3f(1, 1, 0);
+			glBegin(GL_LINES);
+			glVertex3f(line->start.x, line->start.y, 0);
+			glVertex3f(line->end.x, line->end.y, 0);
+			glEnd();
+		}
 	}
 
-	glColor3f(1, 1, 0);
 	if (point1 != NULL) {
-		if (!point1Valid) { 
-			glColor3f(1, 0, 0);
-		}
 		renderPoint(*point1);
 	}
 
-	glColor3f(1, 1, 0);
 	if (point2 != NULL) {
-		if (!point2Valid) {
-			glColor3f(1, 0, 0);
-		}
 		renderPoint(*point2);
 	}
 
@@ -96,47 +92,130 @@ void DynamicRoadGenerator::draw() {
 
 void DynamicRoadGenerator::processMouseMovement(float x, float y) {
 	x *= 2;
-	y *= -2;
+	y *= 2;
 
 	glm::vec2 result;
-	bool isValid;
-	for (Line *l : lines) {
-		if (l->isPointNear(glm::vec2(x, y), result, isValid)) {
-			if (!point1Placed) {
-				point1 = new glm::vec2(result);
-				point1Valid = isValid;
-				point1Placed = false;
+	Line *closestLine = findClosestLine(glm::vec2(x, y));
+	if (!point1Placed) {
+		if (closestLine->isPointNear(glm::vec2(x, y), result)) {
+			if (point1 != NULL) {
+				delete point1;
+				point1 = NULL;
 			}
-			else if (point1Placed && point2 == NULL) {
-				point2 = new glm::vec2(result);
-				point2Valid = isValid;
-			}
+			point1 = new glm::vec2(result);
+		}
+	} else {
+		if (point2 != NULL) {
+			delete point2;
+			point2 = NULL;
+		}
+		if (closestLine->isPointNear(glm::vec2(x, y), result)) {	
+			point2 = new glm::vec2(result);
+		}
+		else {
+			point2 = new glm::vec2(x, y);
+		}
+
+		if (findClosestLine(*point1)->isHorizontal()) {
+			point2->x = point1->x;
+		}
+		else {
+			point2->y = point1->y;
 		}
 	}
 }
 
 void DynamicRoadGenerator::processMouseClick(float x, float y) {
 	x *= 2;
-	y *= -2;
+	y *= 2;
 
 	glm::vec2 result;
-	bool isValid;
-	for (Line *l : lines) {
-		if (l->isPointNear(glm::vec2(x, y), result, isValid) && isValid) {
-			if (point1 == NULL) {
-				point1 = new glm::vec2(result);
-				point1Placed = true;
-			}
-			else if (point1Placed && point2 == NULL) {
-				point2 = new glm::vec2(result);
-				Line *l = new Line();
-				l->start = *point1;
-				l->end = *point2;
+	Line *closestLine = findClosestLine(glm::vec2(x, y));
+	if (!point1Placed) {
+		if (closestLine->isPointNear(glm::vec2(x, y), result)) {
+			if (point1 != NULL) {
 				delete point1;
-				delete point2;
-				point1 = NULL; point2 = NULL;
-				point1Placed = false;
+				point1 = NULL;
+			}
+			point1 = new glm::vec2(result);
+			point1Placed = true;
+			point1Line = closestLine;
+		}
+	}
+	else {
+		if (point2 != NULL) {
+			delete point2;
+			point2 = NULL;
+		}
+		if (closestLine->isPointNear(glm::vec2(x, y), result)) {
+			point2 = new glm::vec2(result);
+			if (findClosestLine(*point1)->isHorizontal()) {
+				point2->x = point1->x;
+			}
+			else {
+				point2->y = point1->y;
+			}
+			Line *newLine = new Line();
+			newLine->start = *point1;
+			newLine->end = *point2;
+
+			Square *sq = findSquareByTwoPoints(*point1, *point2);
+			if (sq != NULL) {
+				std::pair<Square*, Square*> newSquares = sq->splitByLine(newLine);
+				squares.push_back(newSquares.first); squares.push_back(newSquares.second);
+				removeSquare(sq);
+			}
+
+			delete point1; point1 = NULL;
+			delete point2; point2 = NULL;
+			point1Placed = false;
+		}
+	}
+}
+
+Line *DynamicRoadGenerator::findClosestLine(glm::vec2 point) {
+	Line *closest = squares.front()->getLines().front();
+	float distance = 100000;
+	for (Square *sq : squares) {
+		for (Line *l : sq->getLines()) {
+			if (glm::dot(point - l->start, l->end - l->start) < 0
+				|| glm::dot(point - l->end, l->start - l->end) < 0) {
+				continue;
+			}
+			else {
+				glm::vec2 lineVec = l->end - l->start;
+				glm::vec2 pointOnLine = lineVec * glm::dot(lineVec, point - l->start) / glm::dot(lineVec, lineVec) + l->start;
+				float dist = glm::length(pointOnLine - point);
+				if (dist < distance) {
+					distance = dist;
+					closest = l;
+				}
 			}
 		}
 	}
+	return closest;
+}
+
+Square *DynamicRoadGenerator::findSquareByTwoLines(Line *l1, Line *l2) {
+	for (Square *sq : squares) {
+		if (sq->lineBelongsTo(l1) && sq->lineBelongsTo(l2)) {
+			return sq;
+		}
+	}
+
+	return NULL;
+}
+
+void DynamicRoadGenerator::removeSquare(Square *sq) {
+	squares.erase(std::remove(squares.begin(), squares.end(), sq), squares.end());
+}
+
+Square *DynamicRoadGenerator::findSquareByTwoPoints(glm::vec2 point1, glm::vec2 point2) {
+	for (Square *sq : squares) {
+		if (sq->pointBelongsTo(point1) && sq->pointBelongsTo(point2)) {
+			return sq;
+		}
+	}
+
+	return NULL;
 }
