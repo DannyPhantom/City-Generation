@@ -91,7 +91,7 @@ private:
 private:
 	std::vector<SceneObject *> objects;
 
-	Skybox s_box;
+	Skybox *s_box;
 
 	glm::mat4 projectionMatrix;
 	glm::mat4 inverseProjectionMatrix;

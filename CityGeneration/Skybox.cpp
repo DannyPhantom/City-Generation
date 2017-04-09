@@ -4,8 +4,53 @@
  *  Created on: Apr 7, 2017
  *      Author: marc.desorcy
  */
-#define STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
 #include "Skybox.h"
+
+glm::vec3 skyboxVertices[] = {
+    // Positions
+	glm::vec3(-1.0f,  1.0f, -1.0f),
+	glm::vec3(-1.0f, -1.0f, -1.0f),
+	glm::vec3(1.0f, -1.0f, -1.0f),
+	glm::vec3(1.0f, -1.0f, -1.0f),
+	glm::vec3(1.0f,  1.0f, -1.0f),
+	glm::vec3(-1.0f,  1.0f, -1.0f),
+
+	glm::vec3(-1.0f, -1.0f,  1.0f),
+	glm::vec3(-1.0f, -1.0f, -1.0f),
+	glm::vec3(-1.0f,  1.0f, -1.0f),
+	glm::vec3(-1.0f,  1.0f, -1.0f),
+	glm::vec3(-1.0f,  1.0f,  1.0f),
+	glm::vec3(-1.0f, -1.0f,  1.0f),
+
+	glm::vec3(1.0f, -1.0f, -1.0f),
+	glm::vec3(1.0f, -1.0f,  1.0f),
+	glm::vec3(1.0f,  1.0f,  1.0f),
+	glm::vec3(1.0f,  1.0f,  1.0f),
+	glm::vec3(1.0f,  1.0f, -1.0f),
+	glm::vec3(1.0f, -1.0f, -1.0f),
+
+	glm::vec3(-1.0f, -1.0f,  1.0f),
+	glm::vec3(-1.0f,  1.0f,  1.0f),
+	glm::vec3(1.0f,  1.0f,  1.0f),
+	glm::vec3(1.0f,  1.0f,  1.0f),
+	glm::vec3(1.0f, -1.0f,  1.0f),
+	glm::vec3(-1.0f, -1.0f,  1.0f),
+
+	glm::vec3(-1.0f,  1.0f, -1.0f),
+	glm::vec3(1.0f,  1.0f, -1.0f),
+	glm::vec3(1.0f,  1.0f,  1.0f),
+	glm::vec3(1.0f,  1.0f,  1.0f),
+	glm::vec3(-1.0f,  1.0f,  1.0f),
+	glm::vec3(-1.0f,  1.0f, -1.0f),
+
+	glm::vec3(-1.0f, -1.0f, -1.0f),
+	glm::vec3(-1.0f, -1.0f,  1.0f),
+	glm::vec3(1.0f, -1.0f, -1.0f),
+	glm::vec3(1.0f, -1.0f, -1.0f),
+	glm::vec3(-1.0f, -1.0f,  1.0f),
+	glm::vec3(1.0f, -1.0f,  1.0f)
+};
 
 Skybox::Skybox() {
 	// TODO Auto-generated constructor stub
@@ -25,7 +70,7 @@ void Skybox::create()
 	std::vector<glm::vec4> colors;
 	std::vector<GLuint> indices;
 
-	for(int i = 0; i < skyboxVertices.size(); i+=3)
+	for(int i = 0; i < (sizeof(skyboxVertices)/sizeof(*skyboxVertices)); i+=3)
 	{
 		vertices.push_back(skyboxVertices[i]);
 		vertices.push_back(skyboxVertices[i+1]);
@@ -44,7 +89,7 @@ void Skybox::create()
 		uvs.push_back(glm::vec2(0.0f, 0.0f));
 	}
 
-	vector<const GLchar*> faces;
+	std::vector<const GLchar*> faces;
 	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_rt.tga");
 	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_lf.tga");
 	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_up.tga");
@@ -55,18 +100,22 @@ void Skybox::create()
 	Texture *tex = loadCubemap(faces);
 
 	Mesh *m = new Mesh(vertices, uvs, colors, normals, indices, tex, 12);
-	addMesh(m);
+	this->addMesh(m);
+
+	this->setupVBOs();
+	this->setupVAOs();
 }
 
 Texture* Skybox::loadCubemap(std::vector<const GLchar*> faces)
 {
     GLuint textureID;
     glGenTextures(1, &textureID);
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE1);
 
     int width,height,n;
     unsigned char* image;
     bool loaded = true;
+    Texture *text = NULL;
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
     for(GLuint i = 0; i < faces.size(); i++)
@@ -92,7 +141,7 @@ Texture* Skybox::loadCubemap(std::vector<const GLchar*> faces)
     	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    	Texture *text(GL_TEXTURE_CUBE_MAP,  textureID);
+    	text = new Texture(GL_TEXTURE_CUBE_MAP,  textureID);
     	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     	stbi_image_free(image);

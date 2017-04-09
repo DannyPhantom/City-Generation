@@ -5,61 +5,18 @@
  *      Author: marc.desorcy
  */
 
-#ifndef CITYGENERATION_SKYBOX_H_
-#define CITYGENERATION_SKYBOX_H_
+//#ifndef CITYGENERATION_SKYBOX_H_
+//#define CITYGENERATION_SKYBOX_H_
+
+#pragma once
 
 #include <string>
 #include "Quad2D.h"
 #include "SceneObject.h"
-#include "SkyboxTexture.h"
 #include "Texture.h"
 #include "Libraries/glew/glew.h"
-#include "Libraries/stb_image.h"
+//#include "Libraries/stb_image.h"
 
-GLfloat skyboxVertices[] = {
-    // Positions
-    -1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-    -1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f, -1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-
-    -1.0f, -1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f,
-    -1.0f, -1.0f,  1.0f,
-
-    -1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
-     1.0f,  1.0f,  1.0f,
-     1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f,  1.0f,
-    -1.0f,  1.0f, -1.0f,
-
-    -1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f,  1.0f,
-     1.0f, -1.0f,  1.0f
-};
 
 class Skybox:public SceneObject {
 public:
@@ -79,4 +36,4 @@ private:
 
 };
 
-#endif /* CITYGENERATION_SKYBOX_H_ */
+//#endif /* CITYGENERATION_SKYBOX_H_ */

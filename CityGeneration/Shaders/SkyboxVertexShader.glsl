@@ -15,5 +15,5 @@ uniform highp mat4 ProjectionMatrix;
 void main()
 {
     gl_Position =   ProjectionMatrix * ModelViewMatrix * vec4(position_attr, 1.0);  
-    TexCoords = position;
+    TexCoords = position_attr;
 }  
