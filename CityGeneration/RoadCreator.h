@@ -25,9 +25,11 @@ public:
 
 
 	void makeRenderableRoads(vector<Road*> roads);
+	void makeRoadMesh(vector<vec3> vertices, vec3 color);
+
 
 private:
-	float medianWidth = 4.0;
+	float medianWidth = 0.5;
 	float roadWidth = 5.0;
 
 
