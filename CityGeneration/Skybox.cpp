@@ -120,7 +120,7 @@ Texture* Skybox::loadCubemap(std::vector<const GLchar*> faces)
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
     for(GLuint i = 0; i < faces.size(); i++)
     {
-    	image = stbi_load(faces[i], &width, &height, &n, 4);
+    	image = stbi_load(faces[i], &width, &height, &n, 0);
 		if (image != NULL)
 		{
 			//image = SOIL_load_image(faces[i], &width, &height, 0, SOIL_LOAD_RGB);

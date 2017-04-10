@@ -61,6 +61,7 @@ void Scene::renderPhong() {
 	glUniformMatrix4fv(
 				glGetUniformLocation(skyboxShader, "ProjectionMatrix"), 1,
 				false, &(getProjectionMatrix()[0][0]));
+
 	s_box->draw(skyboxShader, cam.getViewMatrix());
 
 	glDepthMask(GL_TRUE);
@@ -204,6 +205,7 @@ void Scene::loadObjects() {
 	objects.push_back(roadCreator);
 
 	s_box = new Skybox();
+	s_box->updateScale(vec3(3000.0f));
 }
 
 void Scene::placeObjects() {
