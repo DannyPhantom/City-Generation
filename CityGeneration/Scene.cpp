@@ -58,6 +58,17 @@ void Scene::renderPhong() {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	//skybox
+	glDepthMask(GL_FALSE);
+	glUseProgram(skyboxShader);
+	glUniformMatrix4fv(
+				glGetUniformLocation(skyboxShader, "ProjectionMatrix"), 1,
+				false, &(getProjectionMatrix()[0][0]));
+
+	s_box->draw(skyboxShader, cam.getViewMatrix());
+
+	glDepthMask(GL_TRUE);
+
 	glUseProgram(basicPhongShader);
 
 	glUniformMatrix4fv(
@@ -115,6 +126,7 @@ void Scene::renderPhong() {
 void Scene::renderScene(float dt) {
 	//update the camera's position
 	cam.update(dt);
+	//TODO: Add rendering for the skybox, and write its shaders
 	renderPhong();
 }
 
@@ -125,14 +137,27 @@ void Scene::loadShaders() {
 			"CityGeneration/Shaders/PhongFragmentShader.glsl");
 	shader2D = loader.loadShader("CityGeneration/Shaders/Shader2DVertex.glsl",
 			"CityGeneration/Shaders/Shader2DFragment.glsl");
+	skyboxShader = loader.loadShader(
+			"CityGeneration/Shaders/SkyboxVertexShader.glsl",
+			"CityGeneration/Shaders/SkyboxFragmentShader.glsl");
 }
 
 void Scene::loadOtherStuff() {
 	WindowsTextureGenerator g;
 	windowsTexture = g.generateTexture();
+
+	/*vector<const GLchar*> faces;
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_rt.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_lf.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_up.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_dn.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_bk.tga");
+	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_ft.tga");
+	skyboxTexture = s_box.loadCubemap(faces);*/
 }
 
 void Scene::loadObjects() {
+	//Skybox
 	ObjLoader loader;
 	//objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
 	//objects.push_back(new ComplexBlockBuilding(glm::vec3(100, 0, 0), glm::vec3(40, 0, 40)));
@@ -193,12 +218,15 @@ void Scene::loadObjects() {
 			}
 		}
 
-		//RoadCreator* roadCreator = new RoadCreator();
-		//roadCreator->makeRenderableRoads(roads);
+	RoadCreator* roadCreator = new RoadCreator();
+	roadCreator->makeRenderableRoads(grids.at(0)->getRoads());
 
-		//objects.push_back(roadCreator);
-	}
 
+	objects.push_back(roadCreator);
+
+
+	s_box = new Skybox();
+	s_box->updateScale(vec3(3000.0f));
 }
 
 void Scene::placeObjects() {
