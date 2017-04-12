@@ -218,6 +218,7 @@ void Scene::loadObjects() {
 			}
 		}
 
+
 	RoadCreator* roadCreator = new RoadCreator();
 	roadCreator->makeRenderableRoads(grids.at(0)->getRoads());
 
@@ -227,6 +228,7 @@ void Scene::loadObjects() {
 
 	s_box = new Skybox();
 	s_box->updateScale(vec3(3000.0f));
+	}
 }
 
 void Scene::placeObjects() {
