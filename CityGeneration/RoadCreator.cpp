@@ -85,7 +85,7 @@ void RoadCreator::makeRenderableRoads(vector<Road*> roads)
 			{
 
 				movingOrigin += step;
-				if ( j != (numOfLanes/2) ) {
+				if ( j != (numOfLanes/2 - 1) ) {
 				vec3 newP1, newP2, newP3, newP4, newP5, newP6;
 //				/movingOrigin += step;
 
@@ -115,11 +115,14 @@ void RoadCreator::makeRenderableRoads(vector<Road*> roads)
 				movingOrigin = vec3(road->origin_x  , 0.0, road->origin_y - road->width/2.0 );
 				///movingOrigin = vec3(road->origin_x + road->width/2.0, 0,0);
 				step = vec3(0, 0, road->width/((float) numOfLanes));
+
 				for (j = 0; j < (numOfLanes - 1) ; j++)
 				{
-					if (j != numOfLanes/2) {
-					vec3 newP1, newP2, newP3, newP4, newP5, newP6;
+					//movingOrigin += step;
 					movingOrigin += step;
+					if (j != (numOfLanes/2 - 1)) {
+					vec3 newP1, newP2, newP3, newP4, newP5, newP6;
+
 
 					newP1 = movingOrigin;
 					newP2 = movingOrigin + vec3(0, 0, -medianWidth);
