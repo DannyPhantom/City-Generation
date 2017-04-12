@@ -152,6 +152,10 @@ void pressKey(unsigned char key, int x, int y) {
 		//enter
 		if (key == 13) {
 			g->stopCreating();
+		} else if (key == 8)
+		{
+			g->processUndo();
+			//printf("Backspace was pressed \n");
 		}
 	}
 

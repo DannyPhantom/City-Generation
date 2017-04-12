@@ -207,6 +207,7 @@ Square *DynamicRoadGenerator::findSquareByTwoLines(Line *l1, Line *l2) {
 }
 
 void DynamicRoadGenerator::removeSquare(Square *sq) {
+	deletedSquares.push_back(sq);
 	squares.erase(std::remove(squares.begin(), squares.end(), sq), squares.end());
 }
 
@@ -218,4 +219,26 @@ Square *DynamicRoadGenerator::findSquareByTwoPoints(glm::vec2 point1, glm::vec2 
 	}
 
 	return NULL;
+}
+
+void DynamicRoadGenerator::processUndo()
+{
+	//error checking
+	if (squares.size() < 2)
+	{
+		return;
+	}
+
+
+	//erase the most recent squares
+	squares.erase(squares.begin() + squares.size() - 1);
+	squares.erase(squares.begin() + squares.size() - 1);
+
+	//add the newest deleted square
+	squares.push_back(deletedSquares.at(deletedSquares.size() - 1));
+
+
+	//remove the deleted square
+	deletedSquares.erase(deletedSquares.begin() + deletedSquares.size() - 1);
+
 }

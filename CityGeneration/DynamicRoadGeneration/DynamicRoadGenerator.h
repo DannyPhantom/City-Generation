@@ -8,6 +8,7 @@ class Square;
 class DynamicRoadGenerator
 {
 private:
+	std::vector<Square *> deletedSquares;
 	std::vector<Square*> squares;
 
 	Line *point1Line = NULL;
@@ -23,6 +24,7 @@ public:
 	~DynamicRoadGenerator();
 
 	void draw();
+	void processUndo();
 	void processMouseMovement(float x, float y);
 	void processMouseClick(float x, float y);
 	Line *findClosestLine(glm::vec2 point);
@@ -32,6 +34,8 @@ public:
 
 	void stopCreating() { creationInProcess = false; }
 	bool isDone() { return !creationInProcess; }
+
+
 
 	std::vector<Square *> getSquares() { return squares; }
 };
