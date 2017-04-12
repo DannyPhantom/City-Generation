@@ -164,10 +164,11 @@ void Scene::loadObjects() {
 		}
 	}
 
-	//RoadCreator* roadCreator = new RoadCreator();
-	//roadCreator->makeRenderableRoads(roads);
+	RoadCreator* roadCreator = new RoadCreator();
+	roadCreator->makeRenderableRoads(grids.at(0)->getRoads());
 
-	//objects.push_back(roadCreator);
+
+	objects.push_back(roadCreator);
 
 }
 
