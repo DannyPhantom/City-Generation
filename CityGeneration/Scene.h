@@ -4,6 +4,7 @@
 #include "RoadCreator.h"
 #include "SceneObject.h"
 #include "Camera.h"
+#include "Skybox.h"
 #include <chrono>
 #include <string>
 
@@ -18,6 +19,7 @@ class Scene
 {
 public:
 	static Texture *windowsTexture;
+	static Texture *skyboxTexture;
 
 	static const float minBuildingHeight;
 	static const float maxBuildingHeight;
@@ -89,12 +91,15 @@ private:
 private:
 	std::vector<SceneObject *> objects;
 
+	Skybox *s_box;
+
 	glm::mat4 projectionMatrix;
 	glm::mat4 inverseProjectionMatrix;
 
 	//shaders
 	GLuint basicPhongShader;
 	GLuint shader2D;
+	GLuint skyboxShader;
 	Camera cam;
 };
 
