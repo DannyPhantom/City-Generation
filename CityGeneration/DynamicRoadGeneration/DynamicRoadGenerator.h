@@ -27,16 +27,25 @@ public:
 	void processUndo();
 	void processMouseMovement(float x, float y);
 	void processMouseClick(float x, float y);
+	void processMouseMovementRoadPlacement(float x, float y);
+	void processMouseClickRoadPlacement(float x, float y);
+	void processMouseClickDisableSubdivision(float x, float y);
 	Line *findClosestLine(glm::vec2 point);
 	Square *findSquareByTwoLines(Line *l1, Line *l2);
 	Square *findSquareByTwoPoints(glm::vec2 point1, glm::vec2 point2);
+	Square *findSquareByPoint(glm::vec2 point);
 	void removeSquare(Square *sq);
 
 	void stopCreating() { creationInProcess = false; }
 	bool isDone() { return !creationInProcess; }
 
-
-
 	std::vector<Square *> getSquares() { return squares; }
+
+	enum Mode {
+		MODE_ROAD_PLACEMENT,
+		MODE_DISABLING_SUBDIVISION
+	} currentMode;
+
+	void setMode(Mode mode);
 };
 

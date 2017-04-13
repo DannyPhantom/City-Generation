@@ -23,6 +23,7 @@ void createScene() {
 	glutSetCursor(GLUT_CURSOR_NONE);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 	s = new Scene(squares);
 	s->initializeScene();
 }
@@ -152,10 +153,13 @@ void pressKey(unsigned char key, int x, int y) {
 		//enter
 		if (key == 13) {
 			g->stopCreating();
-		} else if (key == 8)
-		{
+		//bakcspace
+		} else if (key == 8) {
 			g->processUndo();
-			//printf("Backspace was pressed \n");
+		} else if (key == 'p') {
+			g->setMode(DynamicRoadGenerator::MODE_ROAD_PLACEMENT);
+		} else if (key == 'o') {
+			g->setMode(DynamicRoadGenerator::MODE_DISABLING_SUBDIVISION);
 		}
 	}
 
@@ -225,6 +229,8 @@ int main(int argc, char **argv) {
 	//initialize opengl functions
 	glewInit();
 	glEnable(GL_MULTISAMPLE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_DST_ALPHA);
 
 	//initialize the scene
 	g = new DynamicRoadGenerator();

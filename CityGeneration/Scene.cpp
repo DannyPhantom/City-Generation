@@ -100,17 +100,6 @@ void Scene::renderPhong() {
 		glEnd();
 	}
 
-	glColor3f(1, 1, 0);
-	for (Road *r : roads) {
-		glBegin(GL_LINES);
-		glVertex3f(r->origin_x, 0, r->origin_y);
-		if (r->direction == 1)
-			glVertex3f(r->origin_x, 0, r->origin_y + r->length);
-		if (r->direction == 2)
-			glVertex3f(r->origin_x + r->length, 0, r->origin_y);
-		glEnd();
-	}
-
 	glColor3f(1, 0, 0);
 	for (Square *sq: userGrids) {
 		glBegin(GL_LINE_STRIP);
@@ -169,10 +158,37 @@ void Scene::loadObjects() {
 		glm::vec2 size = (*userGrid->top->getRight() - *userGrid->bottom->getLeft()) * citySize;
 		float gridArea = size.x * size.y;
 
-		Grid grid(start.x + majorRoadSize / 2, start.y + majorRoadSize / 2, size.x - majorRoadSize, size.y - majorRoadSize);
-		GridFactory fact;
-		GridHistory hist = fact.generateCustomSubGrids(&grid, std::max(numOfSubdivisions - floor(log(maxArea / gridArea)) * 2, 0.0f));
-		std::vector<LandPlot> plots = hist.getBuildingSpots();
+		std::vector<LandPlot> plots;
+
+		if (userGrid->canBeSubdivided) {
+			Grid grid(start.x + majorRoadSize / 2, start.y + majorRoadSize / 2, size.x - majorRoadSize, size.y - majorRoadSize);
+			GridFactory fact;
+			GridHistory hist = fact.generateCustomSubGrids(&grid, std::max(numOfSubdivisions - floor(log(maxArea / gridArea)) * 2, 0.0f));
+			plots = hist.getBuildingSpots();
+
+			std::vector<Grid *> grids = hist.getLastLevelOfGrid();
+			for (Grid *g : grids) {
+				for (Road *r : g->getRoads()) {
+					roads.push_back(r);
+				}
+			}
+
+
+			RoadCreator* roadCreator = new RoadCreator();
+			roadCreator->makeRenderableRoads(grids.at(0)->getRoads());
+
+
+			objects.push_back(roadCreator);
+		}
+		else {
+			glm::vec2 halfRoadSize(majorRoadSize / 2.0f);
+			LandPlot p;
+			p.bot_left = *userGrid->bottom->getLeft() * citySize + halfRoadSize;
+			p.top_left = *userGrid->top->getLeft() * citySize; p.top_left.x += halfRoadSize.x; p.top_left.y -= halfRoadSize.x;
+			p.top_right = *userGrid->top->getRight() * citySize - halfRoadSize;
+			p.bot_right = *userGrid->bottom->getRight() * citySize; p.bot_right.x -= halfRoadSize.x; p.bot_right.y += halfRoadSize.x;
+			plots.push_back(p);
+		}
 
 		for (LandPlot plot : plots) {
 			for (LandPlot p : subdividePlot(plot)) {
@@ -211,23 +227,9 @@ void Scene::loadObjects() {
 			}
 		}
 
-		std::vector<Grid *> grids = hist.getLastLevelOfGrid();
-		for (Grid *g : grids) {
-			for (Road *r : g->getRoads()) {
-				roads.push_back(r);
-			}
-		}
 
-
-	RoadCreator* roadCreator = new RoadCreator();
-	roadCreator->makeRenderableRoads(grids.at(0)->getRoads());
-
-
-	objects.push_back(roadCreator);
-
-
-	s_box = new Skybox();
-	s_box->updateScale(vec3(3000.0f));
+		s_box = new Skybox();
+		s_box->updateScale(vec3(30000.0f));
 	}
 }
 

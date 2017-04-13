@@ -4,6 +4,7 @@
 
 Square::Square()
 {
+	canBeSubdivided = true;
 }
 
 
@@ -53,6 +54,8 @@ std::pair<Square*, Square*> Square::splitByLine(Line *line) {
 		//delete bottom;
 	}
 
+	sq1->canBeSubdivided = canBeSubdivided;
+	sq2->canBeSubdivided = canBeSubdivided;
 	return std::make_pair(sq1, sq2);
 }
 
@@ -67,4 +70,13 @@ std::vector<Line *> Square::getLines() {
 
 bool Square::pointBelongsTo(glm::vec2 point) {
 	return top->pointBelongsTo(point) || right->pointBelongsTo(point) || bottom->pointBelongsTo(point) || left->pointBelongsTo(point);
+}
+
+
+bool Square::pointBelongsToInside(glm::vec2 point) {
+	return point.x > bottom->getLeft()->x && point.x < top->getRight()->x && point.y > bottom->getLeft()->y && point.y < top->getRight()->y;
+}
+
+void Square::toggleDisabledSubdivision() {
+	canBeSubdivided = !canBeSubdivided;
 }

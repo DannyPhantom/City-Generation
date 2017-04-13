@@ -39,6 +39,8 @@ DynamicRoadGenerator::DynamicRoadGenerator()
 
 	squares.push_back(sq); 
 	creationInProcess = true;
+
+	currentMode = MODE_ROAD_PLACEMENT;
 }
 
 
@@ -49,7 +51,7 @@ DynamicRoadGenerator::~DynamicRoadGenerator()
 void DynamicRoadGenerator::renderPoint(glm::vec2 pos) {
 	glBegin(GL_POLYGON);
 	for (double i = 0; i < TWO_PI; i += TWO_PI / 15) {
-		glVertex3f(pos.x + cos(i) * 0.03f, pos.y + sin(i) * 0.03f, 0.0);
+		glVertex3f(pos.x + cos(i) * 0.009f, pos.y + sin(i) * 0.009f, 0.0);
 	}
 	glEnd();
 }
@@ -63,9 +65,9 @@ void DynamicRoadGenerator::draw() {
 	glLoadIdentity();
 	glScalef(1.0, -1.0, 1.0f);
 
+	glColor3f(1, 1, 0);
 	for (Square *sq : squares) {
 		for (Line *line : sq->getLines()) {
-			glColor3f(1, 1, 0);
 			glBegin(GL_LINES);
 			glVertex3f(line->start.x, line->start.y, 0);
 			glVertex3f(line->end.x, line->end.y, 0);
@@ -73,6 +75,20 @@ void DynamicRoadGenerator::draw() {
 		}
 	}
 
+	glColor4f(0.7, 0, 0, 0.3);
+	float extraOffset = 0.003f;
+	for (Square *sq : squares) {
+		if (!sq->canBeSubdivided) {
+			glBegin(GL_POLYGON);
+			glVertex3f(sq->top->getLeft()->x + extraOffset, sq->top->getLeft()->y - extraOffset, 0);
+			glVertex3f(sq->top->getRight()->x - extraOffset, sq->top->getRight()->y - extraOffset, 0);
+			glVertex3f(sq->bottom->getRight()->x - extraOffset, sq->bottom->getRight()->y + extraOffset, 0);
+			glVertex3f(sq->bottom->getLeft()->x + extraOffset, sq->bottom->getLeft()->y + extraOffset, 0);
+			glEnd();
+		}
+	}
+
+	glColor3f(1, 1, 0);
 	if (point1 != NULL) {
 		renderPoint(*point1);
 	}
@@ -91,6 +107,22 @@ void DynamicRoadGenerator::draw() {
 }
 
 void DynamicRoadGenerator::processMouseMovement(float x, float y) {
+	if (currentMode == MODE_ROAD_PLACEMENT) {
+		processMouseMovementRoadPlacement(x, y);
+	}
+}
+
+void DynamicRoadGenerator::processMouseClick(float x, float y) {
+	if (currentMode == MODE_ROAD_PLACEMENT) {
+		processMouseClickRoadPlacement(x, y);
+	}
+	else if (currentMode == MODE_DISABLING_SUBDIVISION) {
+		processMouseClickDisableSubdivision(x, y);
+	}
+}
+
+
+void DynamicRoadGenerator::processMouseMovementRoadPlacement(float x, float y) {
 	x *= 2;
 	y *= 2;
 
@@ -104,12 +136,13 @@ void DynamicRoadGenerator::processMouseMovement(float x, float y) {
 			}
 			point1 = new glm::vec2(result);
 		}
-	} else {
+	}
+	else {
 		if (point2 != NULL) {
 			delete point2;
 			point2 = NULL;
 		}
-		if (closestLine->isPointNear(glm::vec2(x, y), result)) {	
+		if (closestLine->isPointNear(glm::vec2(x, y), result)) {
 			point2 = new glm::vec2(result);
 		}
 		else {
@@ -125,7 +158,7 @@ void DynamicRoadGenerator::processMouseMovement(float x, float y) {
 	}
 }
 
-void DynamicRoadGenerator::processMouseClick(float x, float y) {
+void DynamicRoadGenerator::processMouseClickRoadPlacement(float x, float y) {
 	x *= 2;
 	y *= 2;
 
@@ -155,21 +188,34 @@ void DynamicRoadGenerator::processMouseClick(float x, float y) {
 			else {
 				point2->y = point1->y;
 			}
-			Line *newLine = new Line();
-			newLine->start = *point1;
-			newLine->end = *point2;
 
-			Square *sq = findSquareByTwoPoints(*point1, *point2);
-			if (sq != NULL) {
-				std::pair<Square*, Square*> newSquares = sq->splitByLine(newLine);
-				squares.push_back(newSquares.first); squares.push_back(newSquares.second);
-				removeSquare(sq);
+			if ((point2->x != point1->x || point2->y != point1->y)) {
+				Line *newLine = new Line();
+				newLine->start = *point1;
+				newLine->end = *point2;
+
+				Square *sq = findSquareByTwoPoints(*point1, *point2);
+				if (sq != NULL) {
+					std::pair<Square*, Square*> newSquares = sq->splitByLine(newLine);
+					squares.push_back(newSquares.first); squares.push_back(newSquares.second);
+					removeSquare(sq);
+				}
 			}
 
 			delete point1; point1 = NULL;
 			delete point2; point2 = NULL;
 			point1Placed = false;
 		}
+	}
+}
+
+void DynamicRoadGenerator::processMouseClickDisableSubdivision(float x, float y) {
+	x *= 2;
+	y *= 2;
+
+	Square *sq = findSquareByPoint(glm::vec2(x, y));
+	if (sq != NULL) {
+		sq->toggleDisabledSubdivision();
 	}
 }
 
@@ -221,6 +267,16 @@ Square *DynamicRoadGenerator::findSquareByTwoPoints(glm::vec2 point1, glm::vec2 
 	return NULL;
 }
 
+Square *DynamicRoadGenerator::findSquareByPoint(glm::vec2 point) {
+	for (Square *sq : squares) {
+		if (sq->pointBelongsToInside(point)) {
+			return sq;
+		}
+	}
+
+	return NULL;
+}
+
 void DynamicRoadGenerator::processUndo()
 {
 	//error checking
@@ -241,4 +297,15 @@ void DynamicRoadGenerator::processUndo()
 	//remove the deleted square
 	deletedSquares.erase(deletedSquares.begin() + deletedSquares.size() - 1);
 
+}
+
+void DynamicRoadGenerator::setMode(Mode mode) {
+	currentMode = mode; 
+	if (point1 != NULL) {
+		delete point1; point1 = NULL;
+	}
+	if (point2 != NULL) {
+		delete point2; point2 = NULL;
+	}
+	point1Placed = false;
 }

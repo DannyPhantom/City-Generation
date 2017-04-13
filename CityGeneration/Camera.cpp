@@ -78,8 +78,6 @@ void Camera::update(float dt) {
 		glm::vec3 right = glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
 		position += right * cameraMovementSpeed  * dt;
 	}
-
-	std::cout << position.x << " " << position.y << " " << position.z << " " << std::endl;
 }
 
 glm::vec3 Camera::getPosition() {

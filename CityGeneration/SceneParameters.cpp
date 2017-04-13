@@ -18,7 +18,7 @@ SceneParameters::~SceneParameters()
 
 void SceneParameters::initialize() {
 	zNear = 0.01f;
-	zFar = 5000.0f;
+	zFar = 50000.0f;
 	screenHeight = 900;
 	screenWidth = 1500;
 	isFullScreen = false;

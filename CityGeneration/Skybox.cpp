@@ -113,7 +113,7 @@ Texture* Skybox::loadCubemap(std::vector<const GLchar*> faces)
     //glActiveTexture(GL_TEXTURE1);
 
     int width,height,n;
-    unsigned char* image;
+    unsigned char* image = NULL;
     bool loaded = true;
     Texture *text = NULL;
 

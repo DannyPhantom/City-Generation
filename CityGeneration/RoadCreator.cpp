@@ -184,13 +184,13 @@ void RoadCreator::makeRenderableRoads(vector<Road*> roads)
 		Mesh *dividerMesh = new Mesh(vertices, uvs, colors, normals, indices, NULL, 1);
 		addMesh(dividerMesh);
 		*/
-		numRoads++;
+		//numRoads++;
 		//cout <<"Made a renderable road \n";
 
 
 	}
 
-	printf("Made %i renderable roads\n", numRoads);
+	//printf("Made %i renderable roads\n", numRoads);
 	setupVBOs();
 	setupVAOs();
 
