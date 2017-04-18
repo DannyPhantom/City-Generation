@@ -16,6 +16,7 @@
 #include "Randomizer.h"
 #include "Road.h"
 #include <algorithm>
+#include "ObjExporter.h"
 
 Texture *Scene::windowsTexture = NULL;
 std::vector<LandPlot> plots;
@@ -146,6 +147,9 @@ void Scene::loadOtherStuff() {
 }
 
 void Scene::loadObjects() {
+	float planeY = -5.0f;
+	plane = new Plane(glm::vec3(-citySize, planeY, -citySize), glm::vec3(citySize, planeY, citySize), glm::vec3(0.1f));
+	objects.push_back(plane);
 	//Skybox
 	ObjLoader loader;
 	//objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
@@ -231,6 +235,18 @@ void Scene::loadObjects() {
 		s_box = new Skybox();
 		s_box->updateScale(vec3(30000.0f));
 	}
+}
+
+void Scene::exportToObj() {
+	std::vector<SceneObject*> objectsToExport;
+	for (SceneObject *obj : objects) {
+		//ignore skybox
+		if (obj != s_box) {
+			objectsToExport.push_back(obj);
+		}
+	}
+	ObjExporter *exp = new ObjExporter(objectsToExport, windowsTexture);
+	exp->exportToObj();
 }
 
 void Scene::placeObjects() {

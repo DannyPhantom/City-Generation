@@ -23,7 +23,7 @@ public:
 	Texture *generateTexture();
 
 
-	const int textureDimensions = 2048;
+	static const int textureDimensions = 2048;
 	static const int numOfWindows = 256;
 };
 

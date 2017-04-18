@@ -44,6 +44,10 @@ public:
 	*/
 	std::vector<glm::vec3> *getVertices() { return &vertices; }
 
+	std::vector<glm::vec3> *getNormals() { return &normals; }
+
+	std::vector<glm::vec4> *getColors() { return &colours; }
+
 	/*
 	Returns uvs for the mesh
 	*/

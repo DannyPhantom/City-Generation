@@ -147,6 +147,10 @@ void pressKey(unsigned char key, int x, int y) {
 		case 'd':
 			s->getCamera()->setMoveCameraRight(true);
 			break;
+			//export to obj
+		case 'e':
+			s->exportToObj();
+			break;
 		}
 	}
 	else {

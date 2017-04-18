@@ -92,5 +92,7 @@ public:
 	*/
 	void recalculateModelMatrix();
 
+	glm::mat4 getModelMatrix() { return modelMatrix; }
+
 };
 

@@ -9,6 +9,7 @@
 #include <string>
 #include "DynamicRoadGeneration/Square.h"
 #include "DynamicRoadGeneration/Line.h"
+#include "Plane.h"
 
 class Texture;
 struct LandPlot;
@@ -46,6 +47,8 @@ public:
 		Returns the scene's camera (controlled by the user)
 	*/
 	Camera *getCamera() { return &cam; }
+
+	void exportToObj();
 
 private:
 
@@ -96,6 +99,7 @@ private:
 	std::vector<SceneObject *> objects;
 
 	Skybox *s_box;
+	Plane *plane;
 
 	glm::mat4 projectionMatrix;
 	glm::mat4 inverseProjectionMatrix;
