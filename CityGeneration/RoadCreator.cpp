@@ -9,7 +9,7 @@
 
 RoadCreator::RoadCreator() {
 	// TODO Auto-generated constructor stub
-
+	medianColor = glm::vec3(0, 0, 1);
 }
 
 RoadCreator::~RoadCreator() {
@@ -166,7 +166,7 @@ void RoadCreator::makeRenderableRoads(vector<Road*> roads)
 		vertices.push_back(p5);
 		vertices.push_back(p6);
 
-		makeRoadMesh(vertices, vec3(0, 0, 1));
+		makeRoadMesh(vertices, medianColor);
 		/*
 		vector<vec3> normals;
 		vector<vec2> uvs;

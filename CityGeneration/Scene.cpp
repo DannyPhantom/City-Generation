@@ -20,7 +20,6 @@
 
 Texture *Scene::windowsTexture = NULL;
 std::vector<LandPlot> plots;
-std::vector<Road *> roads;
 
 const float Scene::minBuildingHeight = 20;
 const float Scene::maxBuildingHeight = 300;
@@ -100,17 +99,6 @@ void Scene::renderPhong() {
 		glVertex3f(p.bot_left.x, 0, p.bot_left.y);
 		glEnd();
 	}
-
-	glColor3f(1, 0, 0);
-	for (Square *sq: userGrids) {
-		glBegin(GL_LINE_STRIP);
-		glVertex3f(sq->left->getBot()->x * citySize, 0.3, sq->left->getBot()->y * citySize);
-		glVertex3f(sq->left->getTop()->x * citySize, 0.3, sq->left->getTop()->y * citySize);
-		glVertex3f(sq->top->getRight()->x * citySize, 0.3, sq->top->getRight()->y * citySize);
-		glVertex3f(sq->right->getBot()->x * citySize, 0.3, sq->right->getBot()->y * citySize);
-		glVertex3f(sq->left->getBot()->x * citySize, 0.3, sq->left->getBot()->y * citySize);
-		glEnd();
-	}
 }
 
 void Scene::renderScene(float dt) {
@@ -135,29 +123,26 @@ void Scene::loadShaders() {
 void Scene::loadOtherStuff() {
 	WindowsTextureGenerator g;
 	windowsTexture = g.generateTexture();
-
-	/*vector<const GLchar*> faces;
-	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_rt.tga");
-	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_lf.tga");
-	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_up.tga");
-	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_dn.tga");
-	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_bk.tga");
-	faces.push_back("CityGeneration/Textures/ame_starfield/starfield_ft.tga");
-	skyboxTexture = s_box.loadCubemap(faces);*/
 }
 
 void Scene::loadObjects() {
 	float planeY = -5.0f;
 	plane = new Plane(glm::vec3(-citySize, planeY, -citySize), glm::vec3(citySize, planeY, citySize), glm::vec3(0.1f));
 	objects.push_back(plane);
-	//Skybox
-	ObjLoader loader;
-	//objects.push_back(loader.loadFromFile("CityGeneration/Models/bunny.obj"));
-	//objects.push_back(new ComplexBlockBuilding(glm::vec3(100, 0, 0), glm::vec3(40, 0, 40)));
 
 	float maxArea = 4 * citySize * citySize;
 
 	for (Square *userGrid : userGrids) {
+		Road *r1 = new Road(glm::length(*userGrid->bottom->getRight() - *userGrid->bottom->getLeft()) * citySize - majorRoadSize, majorRoadSize, userGrid->bottom->getLeft()->x * citySize + majorRoadSize / 2.0f, userGrid->bottom->getLeft()->y * citySize, 2);
+		Road *r2 = new Road(glm::length(*userGrid->top->getRight() - *userGrid->top->getLeft()) * citySize - majorRoadSize, majorRoadSize, userGrid->top->getLeft()->x * citySize + majorRoadSize / 2.0f, userGrid->top->getLeft()->y * citySize, 2);
+		Road *r3 = new Road(glm::length(*userGrid->left->getTop() - *userGrid->left->getBot()) * citySize - majorRoadSize, majorRoadSize, userGrid->left->getBot()->x * citySize, userGrid->left->getBot()->y * citySize + majorRoadSize / 2.0f, 1);
+		Road *r4 = new Road(glm::length(*userGrid->right->getTop() - *userGrid->right->getBot()) * citySize - majorRoadSize, majorRoadSize, userGrid->right->getBot()->x * citySize, userGrid->right->getBot()->y * citySize + majorRoadSize / 2.0f, 1);
+		std::vector<Road *> roads; roads.push_back(r1); roads.push_back(r2); roads.push_back(r3); roads.push_back(r4);
+		RoadCreator* roadCreator = new RoadCreator();
+		roadCreator->setMedianColor(glm::vec3(1, 0, 0));
+		roadCreator->makeRenderableRoads(roads);
+		objects.push_back(roadCreator);
+		
 		glm::vec2 start = *userGrid->bottom->getLeft() * citySize;
 		glm::vec2 size = (*userGrid->top->getRight() - *userGrid->bottom->getLeft()) * citySize;
 		float gridArea = size.x * size.y;
@@ -167,21 +152,12 @@ void Scene::loadObjects() {
 		if (userGrid->canBeSubdivided) {
 			Grid grid(start.x + majorRoadSize / 2, start.y + majorRoadSize / 2, size.x - majorRoadSize, size.y - majorRoadSize);
 			GridFactory fact;
-			GridHistory hist = fact.generateCustomSubGrids(&grid, std::max(numOfSubdivisions - floor(log(maxArea / gridArea)) * 2, 0.0f));
+			GridHistory hist = fact.generateCustomSubGrids(&grid, std::max(numOfSubdivisions - floor(log(maxArea / gridArea)) , 0.0f));
 			plots = hist.getBuildingSpots();
 
 			std::vector<Grid *> grids = hist.getLastLevelOfGrid();
-			for (Grid *g : grids) {
-				for (Road *r : g->getRoads()) {
-					roads.push_back(r);
-				}
-			}
-
-
 			RoadCreator* roadCreator = new RoadCreator();
 			roadCreator->makeRenderableRoads(grids.at(0)->getRoads());
-
-
 			objects.push_back(roadCreator);
 		}
 		else {

@@ -117,11 +117,12 @@ void ObjExporter::exportToObj() {
 	mtlStream << "newmtl texturedMTL\n";
 	mtlStream << "Ns 96.078431\n";
 	mtlStream << "Ka 1.000000 1.000000 1.000000\n";
-	mtlStream << "Kd 0.640000 0.640000 0.640000\n";
+	mtlStream << "Kd 1.000000 1.000000 1.000000\n";
 	mtlStream << "Ks 0.500000 0.500000 0.500000\n";
 	mtlStream << "Ni 1.000000\n";
 	mtlStream << "d 1.000000\n";
-	mtlStream << "illum 2\n";		
+	mtlStream << "illum 2\n";
+	mtlStream << "map_Ka city.tga\n";
 	mtlStream << "map_Kd city.tga\n";
 
 	for (SceneObject *obj : objects) {
